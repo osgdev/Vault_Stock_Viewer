@@ -1,26 +1,42 @@
 package uk.gov.dvla.osg.vault.main;
 
+import java.io.File;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-
+    
+    static final Logger LOGGER = LogManager.getLogger();
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/FXML/MainForm.fxml"));
-        primaryStage.setTitle("Hywels First Card App");
+        Parent root = FXMLLoader.load(getClass().getResource("/FXML/Login.fxml"));
+        primaryStage.setTitle("Vault Stock");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Images/vault.png")));
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(root, 300, 200));
         primaryStage.show();
     }
     
     public static void main(String[] args) {
-
+        
+        String configFile = args[0];
+        boolean propsFileExists = new File(configFile).exists();
+        if (!propsFileExists) {
+            LOGGER.fatal("Properties File '{}' doesn't exist", configFile);
+            System.exit(1);
+        }
+        Config.init(configFile);
+        Config.getInstance();
         launch(args);
-
     }
 
 }

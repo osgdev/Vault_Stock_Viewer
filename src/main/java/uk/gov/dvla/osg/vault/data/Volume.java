@@ -4,6 +4,8 @@ package uk.gov.dvla.osg.vault.data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import uk.gov.dvla.osg.vault.enums.Status;
+
 public class Volume {
 
     @SerializedName("content")
@@ -17,8 +19,7 @@ public class Volume {
         return content;
     }
 
-    public String getStatus() {
-        return status;
+    public Status getStatus() {
+        return Status.valueOf(status.toUpperCase());
     }
-
 }

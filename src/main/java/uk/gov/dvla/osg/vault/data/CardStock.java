@@ -6,6 +6,9 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import uk.gov.dvla.osg.vault.enums.CardClass;
+import uk.gov.dvla.osg.vault.enums.Site;
+
 public class CardStock {
 
     @SerializedName("firstUCI")
@@ -19,7 +22,7 @@ public class CardStock {
     private List<Volume> volumes = null;
     @SerializedName("className")
     @Expose
-    private String className;
+    private String cardClass;
     @SerializedName("location")
     @Expose
     private String location;
@@ -36,12 +39,12 @@ public class CardStock {
         return volumes;
     }
 
-    public String getClassName() {
-        return className;
+    public CardClass getCardClass() {
+        return CardClass.valueOf(cardClass.toUpperCase());
     }
 
-    public String getLocation() {
-        return location;
+    public Site getSite() {
+        return Site.valueOf(location.toUpperCase());
     }
 
 }

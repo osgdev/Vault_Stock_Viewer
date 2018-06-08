@@ -47,10 +47,10 @@ public class JsonReader {
 
        cardStockProd.stream()
            .forEachOrdered(card -> {
-               LOGGER.trace("", card.getClassName(), card.getCardTypeName(), card.getLocation(), card.getFirstUCI());
+               LOGGER.trace("", card.getCardClass(), card.getCardTypeName(), card.getSite(), card.getFirstUCI());
                card.getVolumes().stream()
                    .filter(status -> status.getStatus().equals("InVault") || status.getStatus().equals("Opened")).forEach(volume -> {
-                       LOGGER.trace("{} : {} : {} : {} : {} : {}", card.getClassName(), card.getCardTypeName(), card.getLocation(), card.getFirstUCI(), volume.getStatus(), volume.getContent());
+                       LOGGER.trace("{} : {} : {} : {} : {} : {}", card.getCardClass(), card.getCardTypeName(), card.getSite(), card.getFirstUCI(), volume.getStatus(), volume.getContent());
                });
            });
     }

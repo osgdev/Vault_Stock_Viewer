@@ -1,9 +1,10 @@
-package uk.gov.dvla.osg.vault.controllers;
+package uk.gov.dvla.osg.vault.mainform;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,10 +15,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
+import uk.gov.dvla.osg.vault.enums.CardClass;
+import uk.gov.dvla.osg.vault.enums.Site;
+import uk.gov.dvla.osg.vault.login.LogOut;
 import uk.gov.dvla.osg.vault.viewer.JsonReader;
 
 public class MainFormController {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final boolean DEBUG_MODE = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     
     // TOP SECTION
     @FXML
@@ -202,15 +207,6 @@ public class MainFormController {
     private VaultStock vaultStock;
     private DataHandler dataHandler;
     
-    private void environmentChanged() {
-        String newValue = (String) environmentChoice.getSelectionModel().getSelectedItem();
-        if (newValue.equals("TEST")) {
-            dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
-        } else {
-            dataHandler = new DataHandler(vaultStock.getStockTotals().getProduction());
-        }
-        setupTableData();
-    }
     
     @FXML
     private void initialize() {
@@ -224,7 +220,12 @@ public class MainFormController {
 
     private void loadJsonData() {
         try {
-            String file = "C:\\Users\\OSG\\Test Data\\live-vault-json.json";
+            String file;
+            if (DEBUG_MODE) { 
+                file = "C:\\Users\\OSG\\Test Data\\live-vault-json.json";
+            } else {
+                file ="C:\\Users\\Broomhallp\\Desktop\\live-vault-json.json";
+            }
             vaultStock = JsonReader.LoadStockFile(file);
         } catch (Exception ex) {
             // VaultStock wrtites msg to Log, display error msg dialog box to user
@@ -241,31 +242,25 @@ public class MainFormController {
         environmentChoice.setItems(environmentList);
         environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
             environmentChoice.getSelectionModel().select((int)newValue);
-            environmentChanged();    
+            if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
+                dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
+            } else {
+                dataHandler = new DataHandler(vaultStock.getStockTotals().getProduction());
+            }
+            setupTableData();
         });
    
         siteChoice.setValue(siteList.get(0));
         siteChoice.setItems(siteList);
         siteChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
             siteChoice.getSelectionModel().select((int)newValue);
-            siteChanged();    
         });
         
         cardChoice.setValue(cardList.get(0));
         cardChoice.setItems(cardList);
         cardChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
             cardChoice.getSelectionModel().select((int)newValue);
-            cardChanged();    
         });
-    }
-
-    private void cardChanged() {
-        // TODO Auto-generated method stub
-    }
-
-    private void siteChanged() {
-        // TODO Auto-generated method stub
-        
     }
 
     private void setupTableData() {
@@ -336,35 +331,48 @@ public class MainFormController {
     }
     
     private void setDataSCS() {
-        scs_mTachoTable.setItems(dataHandler.getScsData("TACHO", "m"));
-        scs_mBrpTable.setItems(dataHandler.getScsData("BID", "m"));
-        scs_mPolTable.setItems(dataHandler.getScsData("POL", "m"));
-        scs_mDqcTable.setItems(dataHandler.getScsData("DQC", "m"));
-        scs_fTachoTable.setItems(dataHandler.getScsData("TACHO", "f"));
-        scs_fBrpTable.setItems(dataHandler.getScsData("BID", "f"));
-        scs_fPolTable.setItems(dataHandler.getScsData("POL", "f"));
-        scs_fDqcTable.setItems(dataHandler.getScsData("DQC", "f"));
+        scs_mTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.M));
+        scs_mBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.M));
+        scs_mPolTable.setItems(dataHandler.getScsData(CardClass.POL, Site.M));
+        scs_mDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.M));
+        scs_fTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.F));
+        scs_fBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.F));
+        scs_fPolTable.setItems(dataHandler.getScsData(CardClass.POL, Site.F));
+        scs_fDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.F));
     }
    
     private void setDataOnCrate() {
-        onCrate_mTachoTable.setItems(dataHandler.getOnCrateData("TACHO", "m"));
-        onCrate_mBrpTable.setItems(dataHandler.getOnCrateData("BID", "m"));
-        onCrate_mPolTable.setItems(dataHandler.getOnCrateData("POL", "m"));
-        onCrate_mDqcTable.setItems(dataHandler.getOnCrateData("DQC", "m"));
-        onCrate_fTachoTable.setItems(dataHandler.getOnCrateData("TACHO", "f"));
-        onCrate_fBrpTable.setItems(dataHandler.getOnCrateData("BID", "f"));
-        onCrate_fPolTable.setItems(dataHandler.getOnCrateData("POL", "f"));
-        onCrate_fDqcTable.setItems(dataHandler.getOnCrateData("DQC", "f"));
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateData(CardClass.TACHO, Site.M));
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateData(CardClass.BID, Site.M));
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateData(CardClass.POL, Site.M));
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateData(CardClass.DQC, Site.M));
+        onCrate_fTachoTable.setItems(dataHandler.getOnCrateData(CardClass.TACHO, Site.F));
+        onCrate_fBrpTable.setItems(dataHandler.getOnCrateData(CardClass.BID, Site.F));
+        onCrate_fPolTable.setItems(dataHandler.getOnCrateData(CardClass.POL, Site.F));
+        onCrate_fDqcTable.setItems(dataHandler.getOnCrateData(CardClass.DQC, Site.F));
     }
     
     private void setTestDataUCI() {
-        uci_mTachoTable.setItems(dataHandler.getUciData("TACHO", "m"));
-        uci_mBrpTable.setItems(dataHandler.getUciData("BID", "m"));
-        uci_mPolTable.setItems(dataHandler.getUciData("POL", "m"));
-        uci_mDqcTable.setItems(dataHandler.getUciData("DQC", "m"));
-        uci_fTachoTable.setItems(dataHandler.getUciData("TACHO", "f"));
-        uci_fBrpTable.setItems(dataHandler.getUciData("BID", "f"));
-        uci_fPolTable.setItems(dataHandler.getUciData("POL", "f"));
-        uci_fDqcTable.setItems(dataHandler.getUciData("DQC", "f"));
+        uci_mTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.M));
+        uci_mBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.M));
+        uci_mPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.M));
+        uci_mDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.M));
+        uci_fTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.F));
+        uci_fBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.F));
+        uci_fPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.F));
+        uci_fDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.F));
+    }
+    
+    /**
+     * Files older than 7 days are deleted from the temp dir & then the user is
+     * logged out and application shut down.
+     */
+    public void logout() {
+        // contact RPD on background thread to prevent main window from freezing
+            new Thread(() -> {
+                Platform.runLater(() -> {
+                    LogOut.logout();
+                });
+            }).start();
     }
 }
