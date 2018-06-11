@@ -49,7 +49,7 @@ public class ErrorHandler {
 		dialog.setTitle("RPD Error");
 		// add logo to dialog
 		((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons()
-				.add(new Image(ErrorHandler.class.getResource("/Images/logo.jpg").toString()));
+				.add(new Image(ErrorHandler.class.getResource("/Images/vault.png").toString()));
 		// add content to the pane
 		DialogPane dialogPane = dialog.getDialogPane();
 		dialogPane.getButtonTypes().add(ButtonType.OK);

@@ -1,6 +1,7 @@
 package uk.gov.dvla.osg.vault.login;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,8 +18,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.mainform.ErrorHandler;
 import uk.gov.dvla.osg.vault.mainform.MainFormController;
+import uk.gov.dvla.osg.vault.network.BadResponseModel;
+import uk.gov.dvla.osg.vault.network.RpdLogIn;
 import uk.gov.dvla.osg.vault.viewer.Session;
 
 /**
@@ -37,7 +41,9 @@ public class LoginController {
 	@FXML
 	public Label lblMessage;
 	
-	private final boolean DEBUG_MODE = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+	private String token = "";
+	
+	private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
 	
 	/**
 	 * Submits login request to RPD webservice. If token is retrieved then the user
@@ -55,19 +61,19 @@ public class LoginController {
 			nameField.setDisable(true);
 			passwordField.setDisable(true);
 
-			final LogIn login = new LogIn();
-
+			final RpdLogIn login = new RpdLogIn(NetworkConfig.getInstance());
 			// Login performed on background thread to prevent GUI freezing
 			new Thread(() -> {
 				LOGGER.trace("Attempting to login...");
 				// bypass login while testing
 				if (!DEBUG_MODE) {
-					login.login();
+					token = login.getSessionToken(session.getUserName(), session.getPassword());
 				}
 				// if token wasn't retrieved & not in debug mode, display error dialog
-				if (StringUtils.isBlank(session.getToken()) && !DEBUG_MODE) {
+				if (!StringUtils.isBlank(token)) {
 					Platform.runLater(() -> {
-						ErrorHandler.ErrorMsg(login.getErrorCode(), login.getErrorMessage(), login.getErrorAction());
+					    BadResponseModel loginError = login.getErrorResponse();
+						ErrorHandler.ErrorMsg(loginError.getCode(), loginError.getMessage(), loginError.getAction());
 						// cleanup fields
 						lblMessage.setText("");
 						passwordField.setText("");
@@ -77,6 +83,8 @@ public class LoginController {
 					});
 				} else {
 					LOGGER.trace("Login Complete.");
+					// Add token to session data - blank if in debug mode
+					Session.getInstance().setToken(token);
 					Platform.runLater(() -> {
 						try {
 							// close login page and load main view

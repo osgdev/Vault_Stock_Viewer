@@ -2,8 +2,15 @@ package uk.gov.dvla.osg.vault.utils;
 
 import static uk.gov.dvla.osg.vault.utils.ErrorHandler.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+
+import uk.gov.dvla.osg.vault.data.VaultStock;
 
 /**
  * Utility methods to extract information from the JSON data responses that are
@@ -27,4 +34,19 @@ public class JsonUtils {
 		}
 		return "";
 	}
+	
+    /**
+     * Deserializes the Json read from the supplied file.
+     * @param jsonFile File retrieved from the Vault WebService.
+     * @return Stock information from the Vault.
+     * @throws Exception if there was a syntax error in the Json.
+     */
+    public static VaultStock loadStockFile(String jsonFile) throws Exception {
+        try {
+            return new Gson().fromJson(new FileReader(jsonFile), VaultStock.class);
+        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException ex) {
+            LOGGER.fatal(ex.getMessage());
+            throw ex;
+        }
+    }
 }

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class Config {
+public class NetworkConfig {
     
     private static final Logger LOGGER = LogManager.getLogger();
     
@@ -21,10 +21,10 @@ public class Config {
    private static String filename;
 
    private static class SingletonHelper {
-       private static final Config INSTANCE = new Config();
+       private static final NetworkConfig INSTANCE = new NetworkConfig();
    }
 
-   public static Config getInstance() {
+   public static NetworkConfig getInstance() {
        if (StringUtils.isBlank(filename)) {
            throw new RuntimeException("Application Configuration not initialised before use");
        }
@@ -53,7 +53,7 @@ public class Config {
     private String loginUrl = "";
     private String logoutUrl = "";
   
-    private Config() {
+    private NetworkConfig() {
         Properties properties = new Properties();
         try {
             InputStream input = new FileInputStream(filename);

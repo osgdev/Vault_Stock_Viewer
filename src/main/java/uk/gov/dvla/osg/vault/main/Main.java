@@ -34,8 +34,8 @@ public class Main extends Application {
             LOGGER.fatal("Properties File '{}' doesn't exist", configFile);
             System.exit(1);
         }
-        Config.init(configFile);
-        Config.getInstance();
+        NetworkConfig.init(configFile);
+        NetworkConfig.getInstance();
         launch(args);
     }
 

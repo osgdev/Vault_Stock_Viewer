@@ -25,13 +25,12 @@ public class RestClient {
 	 * @param url RPD login URL in format hostname:port address
 	 * @return Response in JSON format, containing a session token for the currently logged in user
 	 */
-	public static Response rpdLogin(String url) {
-		
+	public static Response rpdLogin(String url, String userName, String password) {
 		//Note: unencrypted credentials is a requirement of the RPD RESTAPI
 		return ClientBuilder.newClient()
 							.target(url)
-							.queryParam("name", Session.getInstance().getUserName())
-							.queryParam("pwd", Session.getInstance().getPassword())
+							.queryParam("name", userName)
+							.queryParam("pwd", password)
 							.request(MediaType.APPLICATION_JSON)
 							.get();
 	}
@@ -41,13 +40,11 @@ public class RestClient {
      * @param url RPD login URL in format hostname:port address
      * @return Response in JSON format, containing a session token for the currently logged in user
      */
-    public static Response vaultStock(String url) {
-        
-        //Note: unencrypted credentials is a requirement of the RPD RESTAPI
+    public static Response vaultStock(String url, String token) {
         return ClientBuilder.newClient()
                             .target(url)
                             .request(MediaType.APPLICATION_JSON)
-                            .header("ippdcredential", "<credential token='" + Session.getInstance().getToken() + "'/>")
+                            .header("ippdcredential", "<credential token='" + token + "'/>")
                             .get();
     }
     
@@ -57,13 +54,13 @@ public class RestClient {
 	 * @param url RPD RestApi URL in format hostname:port address
 	 * @return Response in JSON format includes an array of groups to which the user belongs
 	 */
-	public static Response rpdGroup(String url) {
+	public static Response rpdGroup(String url, String token) {
 		return ClientBuilder.newClient()
 							.register(MultiPartFeature.class)
 							.target(url)
 							.queryParam("attribute", "User.Groups")
 							.request(MediaType.APPLICATION_JSON)
-							.header("token", Session.getInstance().getToken())
+							.header("token", token)
 							.get();
 	}
 
@@ -73,12 +70,12 @@ public class RestClient {
 	 * @param multiPart Should contain the file(s) to transmit
 	 * @return 202 status code if file was transmitted successfully
 	 */
-	public static Response rpdSubmit(String url, MultiPart multiPart) {
+	public static Response rpdSubmit(String url, MultiPart multiPart, String token) {
 		return ClientBuilder.newClient()
 				.register(MultiPartFeature.class)
 				.target(url)
 				.request(MediaType.APPLICATION_JSON)
-		        .header("ippdcredential", "<credential token='" + Session.getInstance().getToken() + "'/>")
+		        .header("ippdcredential", "<credential token='" + token + "'/>")
 		        .post(Entity.entity(multiPart, multiPart.getMediaType()));
 	}
 	
@@ -87,11 +84,11 @@ public class RestClient {
 	 * @param url RPD logout URL in format hostname:port address
 	 * @return Response in JSON format
 	 */
-	public static Response rpdLogOut(String url) {
+	public static Response rpdLogOut(String url, String token) {
 		return ClientBuilder.newClient().target(url)
 				.path(Session.getInstance().getUserName())
 				.request(MediaType.APPLICATION_JSON)
-				.header("token", Session.getInstance().getToken())
+				.header("token", token)
 				.post(null);
 	}
 }

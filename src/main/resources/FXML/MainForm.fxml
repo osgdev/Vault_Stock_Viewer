@@ -81,7 +81,7 @@
                         </AnchorPane>
                         <TableView fx:id="scs_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
                             <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -93,7 +93,7 @@
                         </TableView>
                         <TableView fx:id="scs_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                         	<placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -105,7 +105,7 @@
                         </TableView>
                         <TableView fx:id="scs_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mPolCol_Card" prefWidth="75.0" text="POL" />
@@ -117,7 +117,7 @@
                         </TableView>
                         <TableView fx:id="scs_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -129,7 +129,7 @@
                         </TableView>
                         <TableView fx:id="scs_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -141,7 +141,7 @@
                         </TableView>
                         <TableView fx:id="scs_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -153,7 +153,7 @@
                         </TableView>
                         <TableView fx:id="scs_fPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fPolCol_Card" prefWidth="75.0" text="POL" />
@@ -165,7 +165,7 @@
                         </TableView>
                         <TableView fx:id="scs_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -217,7 +217,7 @@
                         </AnchorPane>
                         <TableView fx:id="onCrate_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -229,7 +229,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -241,7 +241,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mPolCol_Card" prefWidth="75.0" text="POL" />
@@ -253,7 +253,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -265,7 +265,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -277,7 +277,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -289,7 +289,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_fPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fPolCol_Card" prefWidth="75.0" text="POL" />
@@ -301,7 +301,7 @@
                         </TableView>
                         <TableView fx:id="onCrate_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -353,7 +353,7 @@
                         </AnchorPane>
                         <TableView fx:id="uci_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -365,7 +365,7 @@
                         </TableView>
                         <TableView fx:id="uci_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -377,7 +377,7 @@
                         </TableView>
                         <TableView fx:id="uci_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mPolCol_Card" prefWidth="75.0" text="POL" />
@@ -389,7 +389,7 @@
                         </TableView>
                         <TableView fx:id="uci_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -401,7 +401,7 @@
                         </TableView>
                         <TableView fx:id="uci_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
@@ -413,7 +413,7 @@
                         </TableView>
                         <TableView fx:id="uci_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                          <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fBrpCol_Card" prefWidth="75.0" text="BRP" />
@@ -434,7 +434,7 @@
                         </TableView>
                         <TableView fx:id="uci_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
-        						<Label text="Nothing in stock!"/>
+        						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fDqcCol_Card" prefWidth="75.0" text="DQC" />
@@ -455,7 +455,7 @@
       </TabPane>
       <AnchorPane prefHeight="163.0" prefWidth="600.0">
          <children>
-            <Label layoutX="422.0" layoutY="108.0" text="06/06/18 13:58" AnchorPane.bottomAnchor="33.0" AnchorPane.rightAnchor="84.0">
+            <Label fx:id="lblTime" layoutX="422.0" layoutY="108.0" text="06/06/18 13:58" AnchorPane.bottomAnchor="33.0" AnchorPane.rightAnchor="84.0">
                <font>
                   <Font size="14.0" />
                </font>

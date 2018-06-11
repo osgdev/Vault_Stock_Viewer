@@ -13,9 +13,10 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import uk.gov.dvla.osg.vault.main.Config;
+import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.mainform.ErrorHandler;
 import uk.gov.dvla.osg.vault.network.RestClient;
+import uk.gov.dvla.osg.vault.viewer.Session;
 
 public class LogOut {
     private static final boolean DEBUG_MODE = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
@@ -25,7 +26,7 @@ public class LogOut {
 	 * log off. If user chooses OK, the application closes regardless of the
 	 * server's response.
 	 */
-	public static void logout() {
+	public static void logout(NetworkConfig config) {
 		// create dialog to confirm logout
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Logout");
@@ -42,10 +43,9 @@ public class LogOut {
 		if (result.isPresent() && result.get() == ButtonType.OK) {
 
 			if (!DEBUG_MODE) {
-		        Config config = Config.getInstance();
 		        String url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLogoutUrl();
     			try {
-    				Response response = RestClient.rpdLogOut(url);
+    				Response response = RestClient.rpdLogOut(url, Session.getInstance().getToken());
     				if (response.getStatus() != 200) {
     					ErrorMsg("Logout failed", "Unable to log user out of RPD web service.");
     				}

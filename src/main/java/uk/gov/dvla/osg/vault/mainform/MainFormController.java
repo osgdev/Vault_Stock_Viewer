@@ -1,5 +1,9 @@
 package uk.gov.dvla.osg.vault.mainform;
 
+import java.lang.management.ManagementFactory;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -18,11 +23,15 @@ import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.enums.CardClass;
 import uk.gov.dvla.osg.vault.enums.Site;
 import uk.gov.dvla.osg.vault.login.LogOut;
-import uk.gov.dvla.osg.vault.viewer.JsonReader;
+import uk.gov.dvla.osg.vault.main.NetworkConfig;
+import uk.gov.dvla.osg.vault.network.BadResponseModel;
+import uk.gov.dvla.osg.vault.network.VaultStockClient;
+import uk.gov.dvla.osg.vault.utils.JsonUtils;
+import uk.gov.dvla.osg.vault.viewer.Session;
 
 public class MainFormController {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final boolean DEBUG_MODE = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+    private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     
     // TOP SECTION
     @FXML
@@ -31,6 +40,8 @@ public class MainFormController {
     private ChoiceBox siteChoice;
     @FXML
     private ChoiceBox cardChoice;
+    @FXML
+    private Label lblTime;
     
     // TABLES - CARDS IN SCS
     @FXML
@@ -211,28 +222,47 @@ public class MainFormController {
     @FXML
     private void initialize() {
         // Load Json File        
-        loadJsonData();        
+        this.vaultStock = loadJsonData();
+        updateTimeLabel();
         loadChoiceBoxes();
-        this.dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
-        setCellValueFactories();
-        setupTableData();
+        
+        if (vaultStock != null) {
+            this.dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
+            setCellValueFactories();
+            setupTableData();
+        }
     }
 
-    private void loadJsonData() {
+    private VaultStock loadJsonData() {
         try {
             String file;
             if (DEBUG_MODE) { 
                 file = "C:\\Users\\OSG\\Test Data\\live-vault-json.json";
+                return JsonUtils.loadStockFile(file);
             } else {
-                file ="C:\\Users\\Broomhallp\\Desktop\\live-vault-json.json";
+                VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
+                vaultStock = vsc.getStock(Session.getInstance().getToken());
+                if (vaultStock != null) {
+                    return vaultStock;
+                } else {
+                    BadResponseModel brm = vsc.getErrorResponse();
+                    ErrorHandler.ErrorMsg(brm.getCode(), brm.getMessage(), brm.getAction());
+                }
             }
-            vaultStock = JsonReader.LoadStockFile(file);
         } catch (Exception ex) {
-            // VaultStock wrtites msg to Log, display error msg dialog box to user
+            // Display error msg dialog box to user
             LOGGER.fatal(ExceptionUtils.getStackTrace(ex));
+            ErrorHandler.ErrorMsg(ex.getClass().getSimpleName(), ex.getMessage());
         }
+        return null;
     }
 
+    private void updateTimeLabel() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        lblTime.setText(dtf.format(now));
+    }
+    
     private void loadChoiceBoxes() {
         ObservableList<String> environmentList = FXCollections.observableArrayList("TEST", "PRODUCTION");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
@@ -371,7 +401,7 @@ public class MainFormController {
         // contact RPD on background thread to prevent main window from freezing
             new Thread(() -> {
                 Platform.runLater(() -> {
-                    LogOut.logout();
+                    LogOut.logout(NetworkConfig.getInstance());
                 });
             }).start();
     }
