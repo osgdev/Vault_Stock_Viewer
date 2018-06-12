@@ -3,6 +3,7 @@ package uk.gov.dvla.osg.vault.mainform;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,10 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
@@ -241,9 +239,9 @@ public class MainFormController {
                 return JsonUtils.loadStockFile(file);
             } else {
                 VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
-                vaultStock = vsc.getStock(Session.getInstance().getToken());
-                if (vaultStock != null) {
-                    return vaultStock;
+                Optional<VaultStock> vs = vsc.getStock(Session.getInstance().getToken());
+                if (vs.isPresent()) {
+                    return vs.get();
                 } else {
                     BadResponseModel brm = vsc.getErrorResponse();
                     ErrorHandler.ErrorMsg(brm.getCode(), brm.getMessage(), brm.getAction());

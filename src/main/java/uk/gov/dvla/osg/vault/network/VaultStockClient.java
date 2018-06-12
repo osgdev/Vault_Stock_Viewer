@@ -1,5 +1,7 @@
 package uk.gov.dvla.osg.vault.network;
 
+import java.util.Optional;
+
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 
@@ -29,13 +31,13 @@ public class VaultStockClient {
         this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getvaultUrl();
     }
     
-    public VaultStock getStock(String token) {
+    public Optional<VaultStock> getStock(String token) {
         try {
             Response response = RestClient.vaultStock(url, token);
             LOGGER.debug(response.toString());
             String data = response.readEntity(String.class); 
             if (response.getStatus() == 200) {
-                return JsonUtils.loadStockFile(data);
+                return Optional.ofNullable(JsonUtils.loadStockFile(data));
             } else {
                 // RPD provides clear error information, and so is mapped to model
                 brm = new XmlMapper().readValue(data, BadResponseModel.class);
@@ -59,7 +61,7 @@ public class VaultStockClient {
             String errorAction = ExceptionUtils.getStackTrace(ex);
             brm = new BadResponseModel(errorMessage, errorAction);
         }
-        return null;
+        return Optional.empty();
     }
 
     public BadResponseModel getErrorResponse() {

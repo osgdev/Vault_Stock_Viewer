@@ -2,8 +2,8 @@ package uk.gov.dvla.osg.vault.login;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,10 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
@@ -41,7 +38,7 @@ public class LoginController {
 	@FXML
 	public Label lblMessage;
 	
-	private String token = "";
+	private Optional<String> token = Optional.empty();
 	
 	private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
 	
@@ -70,7 +67,7 @@ public class LoginController {
 					token = login.getSessionToken(session.getUserName(), session.getPassword());
 				}
 				// if token wasn't retrieved & not in debug mode, display error dialog
-				if (!StringUtils.isBlank(token)) {
+				if (!token.isPresent()) {
 					Platform.runLater(() -> {
 					    BadResponseModel loginError = login.getErrorResponse();
 						ErrorHandler.ErrorMsg(loginError.getCode(), loginError.getMessage(), loginError.getAction());
@@ -84,7 +81,7 @@ public class LoginController {
 				} else {
 					LOGGER.trace("Login Complete.");
 					// Add token to session data - blank if in debug mode
-					Session.getInstance().setToken(token);
+					Session.getInstance().setToken(token.get());
 					Platform.runLater(() -> {
 						try {
 							// close login page and load main view

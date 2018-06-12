@@ -1,5 +1,7 @@
 package uk.gov.dvla.osg.vault.network;
 
+import java.util.Optional;
+
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 
@@ -28,7 +30,7 @@ public class RpdLogIn {
         this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLoginUrl();
     }
     
-    public String getSessionToken(String userName, String password) {
+    public Optional<String> getSessionToken(String userName, String password) {
         try {
         	Response response = RestClient.rpdLogin(url, userName, password);
         	LOGGER.debug(response.toString());
@@ -36,7 +38,7 @@ public class RpdLogIn {
             if (response.getStatus() == 200) {
                 String token = JsonUtils.getTokenFromJson(data);
                 LOGGER.debug("TOKEN: {}", token);
-            	return token;
+            	return Optional.of(token);
             } else {
             	// RPD provides clear error information, and so is mapped to model
                 brm = new GsonBuilder().create().fromJson(data, BadResponseModel.class);
@@ -59,7 +61,7 @@ public class RpdLogIn {
             String errorAction = ExceptionUtils.getStackTrace(ex);
             brm = new BadResponseModel(errorMessage, errorAction);
         }
-        return "";
+        return Optional.empty();
     }
 
     public BadResponseModel getErrorResponse() {
