@@ -11,7 +11,7 @@ public class StockTotals {
     @SerializedName("production")
     @Expose
     private Environment production;
-
+    
     public Environment getTest() {
         return test;
     }
@@ -21,4 +21,3 @@ public class StockTotals {
     }
 
 }
-

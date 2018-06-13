@@ -36,6 +36,7 @@ public class VaultStockClient {
             Response response = RestClient.vaultStock(url, token);
             LOGGER.debug(response.toString());
             String data = response.readEntity(String.class); 
+            LOGGER.debug(data);
             if (response.getStatus() == 200) {
                 return Optional.ofNullable(JsonUtils.loadStockFile(data));
             } else {

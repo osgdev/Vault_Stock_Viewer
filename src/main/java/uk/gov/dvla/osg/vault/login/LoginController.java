@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Optional;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,7 +68,7 @@ public class LoginController {
 					token = login.getSessionToken(session.getUserName(), session.getPassword());
 				}
 				// if token wasn't retrieved & not in debug mode, display error dialog
-				if (!token.isPresent()) {
+				if (!token.isPresent() && !DEBUG_MODE) {
 					Platform.runLater(() -> {
 					    BadResponseModel loginError = login.getErrorResponse();
 						ErrorHandler.ErrorMsg(loginError.getCode(), loginError.getMessage(), loginError.getAction());
@@ -81,7 +82,9 @@ public class LoginController {
 				} else {
 					LOGGER.trace("Login Complete.");
 					// Add token to session data - blank if in debug mode
-					Session.getInstance().setToken(token.get());
+					if (token.isPresent()) {
+					    Session.getInstance().setToken(token.get());					    
+					}
 					Platform.runLater(() -> {
 						try {
 							// close login page and load main view
@@ -103,7 +106,8 @@ public class LoginController {
 							((Stage) btnLogin.getScene().getWindow()).close();
 						} catch (IOException e) {
 							Platform.runLater(() -> {
-							    ErrorHandler.ErrorMsg(e.getClass().getSimpleName(), e.getMessage());
+							    LOGGER.fatal(ExceptionUtils.getStackTrace(e));
+							    ErrorHandler.ErrorMsg("We've no idea what just happened.", "","Best bet is to call Greg!");
 							});
 						}
 					});

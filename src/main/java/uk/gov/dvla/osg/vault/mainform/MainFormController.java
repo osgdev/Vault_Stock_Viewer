@@ -16,6 +16,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.enums.CardClass;
@@ -40,6 +42,8 @@ public class MainFormController {
     private ChoiceBox cardChoice;
     @FXML
     private Label lblTime;
+    @FXML
+    private Button refreshBtn;
     
     // TABLES - CARDS IN SCS
     @FXML
@@ -219,23 +223,46 @@ public class MainFormController {
     
     @FXML
     private void initialize() {
+        // Add image to button
+        Image image = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
+        refreshBtn.setGraphic(new ImageView(image));
         // Load Json File        
-        this.vaultStock = loadJsonData();
         updateTimeLabel();
         loadChoiceBoxes();
-        
+        setCellValueFactories();
+        refreshJson();
+    }
+
+    @FXML 
+    private void refreshJson() {
+        vaultStock = loadJsonData();
         if (vaultStock != null) {
-            this.dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
-            setCellValueFactories();
+            refreshData();
+        }
+        updateTimeLabel();
+        // Move focus to read only control to remove the focus highlight from button
+        lblTime.requestFocus();
+    }
+    
+    private void refreshData() {
+        if (vaultStock != null) {
+            if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
+                dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
+            } else {
+                dataHandler = new DataHandler(vaultStock.getStockTotals().getProduction());
+            }
             setupTableData();
         }
     }
-
+    
     private VaultStock loadJsonData() {
         try {
-            String file;
+            String file = "";
             if (DEBUG_MODE) { 
-                file = "C:\\Users\\OSG\\Test Data\\live-vault-json.json";
+                //file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
+                file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
+                //file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
+                //file = "{\"stockTotals\":{\"test\": null,\"production\":{\"cardStock\":{\"firstUCI\":\"RG9963289\",\"cardTypeName\":\"BID\",\"volumes\":[{\"content\":\"0\",\"status\":\"InVault\"},{\"content\":\"0\",\"status\":\"Quarantined\"},{\"content\":\"212\",\"status\":\"Opened\"},{\"content\":\"0\",\"status\":\"OnCrate\"},{\"content\":\"0\",\"status\":\"InTransit\"}],\"className\":\"BID\",\"location\":\"m\"}}}}";
                 return JsonUtils.loadStockFile(file);
             } else {
                 VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
@@ -262,7 +289,7 @@ public class MainFormController {
     }
     
     private void loadChoiceBoxes() {
-        ObservableList<String> environmentList = FXCollections.observableArrayList("TEST", "PRODUCTION");
+        ObservableList<String> environmentList = FXCollections.observableArrayList("PRODUCTION", "TEST");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
         ObservableList<String> cardList = FXCollections.observableArrayList("ALL","TACHO", "BRP", "POL", "DQC");
         
@@ -270,12 +297,7 @@ public class MainFormController {
         environmentChoice.setItems(environmentList);
         environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
             environmentChoice.getSelectionModel().select((int)newValue);
-            if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
-                dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
-            } else {
-                dataHandler = new DataHandler(vaultStock.getStockTotals().getProduction());
-            }
-            setupTableData();
+            refreshData();
         });
    
         siteChoice.setValue(siteList.get(0));
