@@ -1,5 +1,6 @@
 package uk.gov.dvla.osg.vault.mainform;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import javafx.collections.FXCollections;
@@ -20,21 +21,26 @@ public class DataHandler {
     }
 
     public ObservableList<CardData> getScsData(CardClass cardClass, Site site) {
-        return getData(cardClass, site, volume -> volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED));
+        return getData(cardClass, site, volume -> volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED), true);
     }
 
     public ObservableList<CardData> getOnCrateData(CardClass cardClass, Site site) {
-        return getData(cardClass, site, volume -> volume.getStatus().equals(Status.ONCRATE));
+        return getData(cardClass, site, volume -> volume.getStatus().equals(Status.ONCRATE), true);
     }
 
     public ObservableList<CardData> getUciData(CardClass cardClass, Site site) {
-        return getData(cardClass, site, volume -> volume.getStatus().equals(Status.NONE));
+        // Sets filter to true, meaning that it will get the volume for all statuses.
+        // This prevents the table from hiding content when the 
+        return getData(cardClass, site, volume -> true, false);
     }
 
-    private ObservableList<CardData> getData(CardClass cardClass, Site site, Predicate<? super Volume> filterPredicate) {
+    private ObservableList<CardData> getData(CardClass cardClass, Site site, Predicate<? super Volume> filterPredicate, boolean volRequired) {
 
         ObservableList<CardData> cardDataList = FXCollections.observableArrayList();
         // model may be null when there are no cards for environment
+        AtomicInteger cardCount = new AtomicInteger(0);
+        AtomicInteger totalVolume = new AtomicInteger(0);
+        
         if (model != null) {
             model.getCardStock().stream()
                 .filter(card -> card.getCardClass().equals(cardClass))
@@ -43,9 +49,21 @@ public class DataHandler {
                     CardData data = new CardData(card.getCardTypeName(), card.getFirstUCI());
                     card.getVolumes().stream().filter(filterPredicate).forEach(volume -> {
                         data.increaseVolume(volume.getContent());
+                        totalVolume.addAndGet(volume.getContent());
                     });
-                    cardDataList.add(data);
-            });
+                    if (!data.getVolume().equals("")) {
+                        cardDataList.add(data);
+                        cardCount.incrementAndGet();
+                    }
+            });           
+        }
+        if (cardCount.get() > 1 && volRequired) {    
+            for (int i = cardCount.get(); i < 6; i++) {
+                cardDataList.add(new CardData("", ""));
+            }
+            CardData total = new CardData("TOTAL", "");
+            total.increaseVolume(totalVolume.get());
+            cardDataList.add(total);
         }
         return cardDataList;
     }

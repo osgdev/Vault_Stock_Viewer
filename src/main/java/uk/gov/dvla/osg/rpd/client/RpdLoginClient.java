@@ -32,11 +32,9 @@ public class RpdLoginClient {
     public Optional<String> getSessionToken(String userName, String password) {
         try {
         	Response response = RestClient.rpdLogin(url, userName, password);
-        	LOGGER.debug(response.toString());
         	String data = response.readEntity(String.class); 
             if (response.getStatus() == 200) {
                 String token = JsonUtils.getTokenFromJson(data);
-                LOGGER.debug("TOKEN: {}", token);
             	return Optional.of(token);
             } else {
             	// RPD provides clear error information, and so is mapped to model

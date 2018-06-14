@@ -13,7 +13,8 @@ public final class EmptyStringAsNullTypeAdapter<T> implements JsonDeserializer<T
         
         try {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-            if(jsonObject.get("stockTotals").getAsJsonObject().get("test").getAsString().isEmpty()) {
+            JsonObject stockTotals = jsonObject.get("stockTotals").getAsJsonObject();
+            if (stockTotals.get("test").isJsonPrimitive()) {
                 jsonObject.get("stockTotals").getAsJsonObject().remove("test");
             }
             return (T)new Gson().fromJson(jsonObject , VaultStock.class); // default deserialization

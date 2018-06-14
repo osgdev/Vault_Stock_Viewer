@@ -4,6 +4,7 @@ import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,11 +14,13 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import uk.gov.dvla.osg.rpd.client.VaultStockClient;
 import uk.gov.dvla.osg.rpd.error.BadResponseModel;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
@@ -231,6 +234,7 @@ public class MainFormController {
         updateTimeLabel();
         loadChoiceBoxes();
         setCellValueFactories();
+        setupRefreshBtn();
         refreshJson();
     }
 
@@ -261,8 +265,8 @@ public class MainFormController {
             String file = "";
             if (DEBUG_MODE) { 
                 //file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
-                file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
-                //file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
+                //file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
+                file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
                 //file = "{\"stockTotals\":{\"test\": null,\"production\":{\"cardStock\":{\"firstUCI\":\"RG9963289\",\"cardTypeName\":\"BID\",\"volumes\":[{\"content\":\"0\",\"status\":\"InVault\"},{\"content\":\"0\",\"status\":\"Quarantined\"},{\"content\":\"212\",\"status\":\"Opened\"},{\"content\":\"0\",\"status\":\"OnCrate\"},{\"content\":\"0\",\"status\":\"InTransit\"}],\"className\":\"BID\",\"location\":\"m\"}}}}";
                 return JsonUtils.loadStockFile(file);
             } else {
@@ -315,7 +319,7 @@ public class MainFormController {
     }
 
     private void setupTableData() {
-        setDataSCS();
+        setDataSCS();        
         setDataOnCrate();
         setTestDataUCI();
     }
@@ -414,6 +418,74 @@ public class MainFormController {
         uci_fDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.F));
     }
     
+    private void setupRefreshBtn() {
+        
+        AtomicInteger taskExecution = new AtomicInteger(0);
+        
+        refreshBtn.setOnAction(e -> {
+            Alert alert = new Alert(
+                    Alert.AlertType.INFORMATION,
+                    "Download in progress",
+                    ButtonType.CANCEL
+            );
+            alert.setTitle("Downloading Vault Stock");
+            alert.setHeaderText("Please wait... ");
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            alert.setGraphic(progressIndicator);
+ 
+            Task<Void> task = new Task<Void>() {
+                {
+                    setOnFailed(a -> {
+                        alert.close();
+                        updateMessage("Failed");
+                    });
+                    setOnSucceeded(a -> {
+                        alert.close();
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+                        LocalDateTime now = LocalDateTime.now();
+                        updateMessage(dtf.format(now));
+                    });
+                    setOnCancelled(a -> {
+                        alert.close();
+                        updateMessage("Cancelled");
+                    });
+                }
+ 
+                @Override
+                protected Void call() throws Exception {
+                    updateMessage("Processing");
+                    // Short pause
+                    Thread.sleep(2000);
+                    
+                    vaultStock = loadJsonData();
+                    
+                    if (vaultStock != null) {
+                        refreshData();
+                    }
+                    //lblTime.requestFocus();
+                    
+                    return null;
+                }
+            };
+ 
+            lblTime.textProperty().unbind();
+            lblTime.textProperty().bind(task.messageProperty());
+ 
+            Thread taskThread = new Thread(
+                    task,
+                    "task-thread-" + taskExecution.getAndIncrement()
+            );
+            taskThread.start();
+ 
+            alert.initOwner((Stage) refreshBtn.getScene().getWindow());
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.CANCEL && task.isRunning()) {
+                task.cancel();
+            }
+            // Move focus to read only control to remove the focus highlight from button
+            lblTime.requestFocus();
+        });
+    }
     /**
      * Files older than 7 days are deleted from the temp dir & then the user is
      * logged out and application shut down.

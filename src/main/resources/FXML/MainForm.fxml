@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.gov.dvla.osg.vault.mainform.MainFormController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="770.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uk.gov.dvla.osg.vault.mainform.MainFormController">
    <children>
       <HBox spacing="20.0">
          <children>
@@ -78,97 +78,97 @@
                                </Label>
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="scs_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
+                        <TableView fx:id="scs_mTachoTable" prefHeight="400.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
                             <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="scs_mTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_mTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                        <TableView fx:id="scs_mBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
                         	<placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="scs_mBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_mBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                        <TableView fx:id="scs_mPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="scs_mPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_mPolCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
+                        <TableView fx:id="scs_mDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_mDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="scs_mDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_mDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TableView fx:id="scs_fTachoTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="scs_fTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_fTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <TableView fx:id="scs_fBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="scs_fBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_fBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_fPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TableView fx:id="scs_fPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="scs_fPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_fPolCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                        <TableView fx:id="scs_fDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="scs_fDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="scs_fDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="scs_fDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -214,97 +214,97 @@
                                </Label>
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="onCrate_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
+                        <TableView fx:id="onCrate_mTachoTable" prefHeight="400.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="onCrate_mTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_mTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                        <TableView fx:id="onCrate_mBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="onCrate_mBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_mBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                        <TableView fx:id="onCrate_mPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="onCrate_mPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_mPolCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
+                        <TableView fx:id="onCrate_mDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_mDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="onCrate_mDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_mDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TableView fx:id="onCrate_fTachoTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="onCrate_fTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_fTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <TableView fx:id="onCrate_fBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="onCrate_fBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_fBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_fPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TableView fx:id="onCrate_fPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="onCrate_fPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_fPolCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="onCrate_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                        <TableView fx:id="onCrate_fDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="onCrate_fDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="onCrate_fDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                            <TableColumn id="vol" fx:id="onCrate_fDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -350,7 +350,7 @@
                                </Label>
                            </children>
                         </AnchorPane>
-                        <TableView fx:id="uci_mTachoTable" prefHeight="400.0" GridPane.columnIndex="1">
+                        <TableView fx:id="uci_mTachoTable" prefHeight="400.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -362,7 +362,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_mBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                        <TableView fx:id="uci_mBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -374,7 +374,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_mPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                        <TableView fx:id="uci_mPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -386,7 +386,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_mDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
+                        <TableView fx:id="uci_mDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -398,7 +398,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_fTachoTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TableView fx:id="uci_fTachoTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -410,7 +410,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_fBrpTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <TableView fx:id="uci_fBrpTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
                          <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -422,7 +422,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_fPolTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TableView fx:id="uci_fPolTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <columns>
                             <TableColumn fx:id="uci_fPolCol_Card" prefWidth="75.0" text="POL" />
                             <TableColumn fx:id="uci_fPolCol_uci" prefWidth="75.0" text="FIRST UCI" />
@@ -431,7 +431,7 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="uci_fDqcTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                        <TableView fx:id="uci_fDqcTable" prefHeight="200.0" prefWidth="200.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
@@ -459,7 +459,7 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
-            <Button fx:id="refreshBtn" contentDisplay="GRAPHIC_ONLY" layoutX="1101.0" layoutY="45.0" mnemonicParsing="false" onAction="#refreshJson" prefHeight="53.0" prefWidth="61.0" text="RELOAD" AnchorPane.bottomAnchor="45.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="45.0" />
+            <Button fx:id="refreshBtn" contentDisplay="GRAPHIC_ONLY" layoutX="1101.0" layoutY="45.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="61.0" text="RELOAD" AnchorPane.bottomAnchor="45.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="45.0" />
          </children>
       </AnchorPane>
    </children>

@@ -43,7 +43,8 @@ public class CardData {
      * @return the volume
      */
     public String getVolume() {
-        return String.format("%,d", volume);
+        return this.volume == 0 ? "" : String.format("%,d", volume);
+        
     }
     
     /**
