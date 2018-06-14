@@ -1,5 +1,5 @@
 
-package uk.gov.dvla.osg.vault.network;
+package uk.gov.dvla.osg.rpd.error;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

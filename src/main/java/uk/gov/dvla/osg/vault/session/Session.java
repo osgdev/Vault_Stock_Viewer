@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.viewer;
+package uk.gov.dvla.osg.vault.session;
 
 /**
  * Session information for the logged in user.

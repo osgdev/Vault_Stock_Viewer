@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.utils;
+package uk.gov.dvla.osg.vault.crypto;
 
 import java.security.Key;
 

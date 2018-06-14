@@ -1,5 +1,5 @@
 
-package uk.gov.dvla.osg.vault.network;
+package uk.gov.dvla.osg.rpd.error;
 
 import java.util.ArrayList;
 import java.util.List;

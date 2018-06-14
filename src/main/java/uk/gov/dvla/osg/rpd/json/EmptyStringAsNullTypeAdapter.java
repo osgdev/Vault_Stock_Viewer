@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.utils;
+package uk.gov.dvla.osg.rpd.json;
 
 import java.lang.reflect.Type;
 

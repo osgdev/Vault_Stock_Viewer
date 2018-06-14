@@ -6,7 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
-import uk.gov.dvla.osg.vault.utils.AlwaysListTypeAdapterFactory;
+import uk.gov.dvla.osg.rpd.json.AlwaysListTypeAdapterFactory;
 
 public class Environment {
 

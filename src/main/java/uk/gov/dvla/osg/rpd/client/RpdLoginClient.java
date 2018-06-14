@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.network;
+package uk.gov.dvla.osg.rpd.client;
 
 import java.util.Optional;
 
@@ -9,24 +9,23 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.GsonBuilder;
-
+import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.rpd.json.JsonUtils;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
-import uk.gov.dvla.osg.vault.utils.JsonUtils;
 
 
 /**
  * Sends login request to the RPD webservice. Token is obtained from
  * response to authenticate user when submitting files.
  */
-public class RpdLogIn {
+public class RpdLoginClient {
 	
 	static final Logger LOGGER = LogManager.getLogger();
 	
 	private BadResponseModel brm = null;
     private final String url;
     
-    public RpdLogIn(NetworkConfig config) {
+    public RpdLoginClient(NetworkConfig config) {
         this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLoginUrl();
     }
     
@@ -41,7 +40,7 @@ public class RpdLogIn {
             	return Optional.of(token);
             } else {
             	// RPD provides clear error information, and so is mapped to model
-                brm = new GsonBuilder().create().fromJson(data, BadResponseModel.class);
+                brm = JsonUtils.getError(data);
             }
         } catch (ProcessingException ex) {
 			String errorMessage = "Unable to connect to RPD web service. Connection timed out";

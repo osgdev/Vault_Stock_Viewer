@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.gov.dvla.osg.vault.utils;
+package uk.gov.dvla.osg.vault.error;
 
 import java.util.Optional;
 

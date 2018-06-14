@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.network;
+package uk.gov.dvla.osg.rpd.client;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
-import uk.gov.dvla.osg.vault.viewer.Session;
+import uk.gov.dvla.osg.vault.session.Session;
 
 /**
  * Utility methods to transmit messages to the RPD REST service.

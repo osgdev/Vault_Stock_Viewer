@@ -18,16 +18,17 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import uk.gov.dvla.osg.rpd.client.VaultStockClient;
+import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.rpd.json.JsonUtils;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.enums.CardClass;
 import uk.gov.dvla.osg.vault.enums.Site;
+import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.login.LogOut;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
-import uk.gov.dvla.osg.vault.network.BadResponseModel;
-import uk.gov.dvla.osg.vault.network.VaultStockClient;
-import uk.gov.dvla.osg.vault.utils.JsonUtils;
-import uk.gov.dvla.osg.vault.viewer.Session;
+import uk.gov.dvla.osg.vault.session.Session;
 
 public class MainFormController {
     private static final Logger LOGGER = LogManager.getLogger();

@@ -16,12 +16,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import uk.gov.dvla.osg.rpd.client.RpdLoginClient;
+import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
-import uk.gov.dvla.osg.vault.mainform.ErrorHandler;
 import uk.gov.dvla.osg.vault.mainform.MainFormController;
-import uk.gov.dvla.osg.vault.network.BadResponseModel;
-import uk.gov.dvla.osg.vault.network.RpdLogIn;
-import uk.gov.dvla.osg.vault.viewer.Session;
+import uk.gov.dvla.osg.vault.session.Session;
 
 /**
  * Form methods and authentication.
@@ -59,7 +59,7 @@ public class LoginController {
 			nameField.setDisable(true);
 			passwordField.setDisable(true);
 
-			final RpdLogIn login = new RpdLogIn(NetworkConfig.getInstance());
+			final RpdLoginClient login = new RpdLoginClient(NetworkConfig.getInstance());
 			// Login performed on background thread to prevent GUI freezing
 			new Thread(() -> {
 				LOGGER.trace("Attempting to login...");

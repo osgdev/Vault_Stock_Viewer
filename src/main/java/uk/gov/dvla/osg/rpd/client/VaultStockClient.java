@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.network;
+package uk.gov.dvla.osg.rpd.client;
 
 import java.util.Optional;
 
@@ -9,11 +9,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
+import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.rpd.json.JsonUtils;
+import uk.gov.dvla.osg.rpd.xml.xmlUtils;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
-import uk.gov.dvla.osg.vault.utils.JsonUtils;
 
 
 /**
@@ -41,7 +41,7 @@ public class VaultStockClient {
                 return Optional.ofNullable(JsonUtils.loadStockFile(data));
             } else {
                 // RPD provides clear error information, and so is mapped to model
-                brm = new XmlMapper().readValue(data, BadResponseModel.class);
+                brm = new xmlUtils().getXmlError(data);
                 //brm = new GsonBuilder().create().fromJson(data, BadResponseModel.class);
             }
         } catch (ProcessingException ex) {

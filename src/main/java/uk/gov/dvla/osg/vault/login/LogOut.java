@@ -1,6 +1,6 @@
 package uk.gov.dvla.osg.vault.login;
 
-import static uk.gov.dvla.osg.vault.utils.ErrorHandler.*;
+import static uk.gov.dvla.osg.vault.error.ErrorHandler.*;
 
 import java.util.Optional;
 
@@ -13,10 +13,10 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import uk.gov.dvla.osg.rpd.client.RestClient;
+import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
-import uk.gov.dvla.osg.vault.mainform.ErrorHandler;
-import uk.gov.dvla.osg.vault.network.RestClient;
-import uk.gov.dvla.osg.vault.viewer.Session;
+import uk.gov.dvla.osg.vault.session.Session;
 
 public class LogOut {
     private static final boolean DEBUG_MODE = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
