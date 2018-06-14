@@ -42,7 +42,6 @@ public class JsonUtils {
      */
     public static VaultStock loadStockFile(String jsonFile) {
         try {
-              //Gson gson = new GsonBuilder().registerTypeAdapter(VaultStock.class, new EmptyStringAsNullTypeAdapter<VaultStock>()).create();
             Gson gsonBldr = new GsonBuilder().registerTypeAdapter(VaultStock.class, new EmptyStringAsNullTypeAdapter()).create();
             if (DEBUG_MODE) {
                     return gsonBldr.fromJson(new FileReader(jsonFile), VaultStock.class);

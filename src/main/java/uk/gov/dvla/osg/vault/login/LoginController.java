@@ -91,7 +91,6 @@ public class LoginController {
 							FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/MainForm.fxml"));
 							Parent root = loader.load();
 							Stage submitJobStage = new Stage();
-							submitJobStage.setResizable(false);
 							// Display logged in user in titlebar
 							submitJobStage.setTitle("Vault Card Stock - " + session.getUserName());
 							submitJobStage.getIcons()

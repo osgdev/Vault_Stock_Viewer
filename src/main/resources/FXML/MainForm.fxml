@@ -45,7 +45,7 @@
       </HBox>
       <TabPane prefHeight="600.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="CARDS IN SCS">
+          <Tab text="On Shelf">
                <content>
                   <GridPane alignment="CENTER" hgap="10.0" vgap="40.0">
                     <columnConstraints>
@@ -181,7 +181,7 @@
                   </GridPane>
                </content>
             </Tab>
-          <Tab text="CARDS IN CRATES">
+          <Tab text="In Crates">
            <content>
                   <GridPane alignment="CENTER" hgap="10.0" vgap="40.0">
                     <columnConstraints>
