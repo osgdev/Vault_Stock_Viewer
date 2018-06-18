@@ -16,7 +16,7 @@ import uk.gov.dvla.osg.vault.session.Session;
  * Utility methods to transmit messages to the RPD REST service.
  * These are set by the RPD REST api and shouldn't be amended.
  */
-public class RestClient {
+public class RpdRestClient {
 	
 	static final Logger LOGGER = LogManager.getLogger();
 	

@@ -22,7 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import uk.gov.dvla.osg.rpd.client.VaultStockClient;
-import uk.gov.dvla.osg.rpd.error.BadResponseModelXml;
+import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
@@ -34,20 +34,6 @@ import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.session.Session;
 
 public class MainFormController {
-/*    private final class UpdateTotalRow extends TableRow<CardData> {
-        private final PseudoClass totalRowPseudoClass;
-
-        private UpdateTotalRow(PseudoClass totalRowPseudoClass) {
-            this.totalRowPseudoClass = totalRowPseudoClass;
-        }
-
-        @Override
-        protected void updateItem(CardData person, boolean b) {
-            super.updateItem(person, b);
-            boolean isTotalRow = person.getCardType().equals("TOTAL") ;
-            pseudoClassStateChanged(totalRowPseudoClass, isTotalRow);
-        }
-    }*/
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
@@ -245,9 +231,8 @@ public class MainFormController {
         setupRefreshBtn();        
         loadChoiceBoxes();
         setCellValueFactories();
-        // Load Json File
-        //refreshJson();
         highlightTotals();
+        // Load Json File
         refreshBtn.fire();
     }
 
@@ -293,8 +278,9 @@ public class MainFormController {
                 if (vs.isPresent()) {
                     return vs.get();
                 } else {
-                    BadResponseModelXml brm = vsc.getErrorResponse();
-                    ErrorHandler.ErrorMsg(brm.getMessage().getCode(), brm.getMessage().getMessage(), brm.getMessage().getAction());
+                    RpdErrorResponse error = vsc.getErrorResponse();
+                    LOGGER.error(error.toString());
+                    ErrorHandler.ErrorMsg(error.getCode(), error.getMessage(), error.getAction());
                 }
             }
         } catch (Exception ex) {

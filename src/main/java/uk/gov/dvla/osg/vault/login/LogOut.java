@@ -13,7 +13,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import uk.gov.dvla.osg.rpd.client.RestClient;
+import uk.gov.dvla.osg.rpd.client.RpdRestClient;
 import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.session.Session;
@@ -45,7 +45,7 @@ public class LogOut {
 			if (!DEBUG_MODE) {
 		        String url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLogoutUrl();
     			try {
-    				Response response = RestClient.rpdLogOut(url, Session.getInstance().getToken());
+    				Response response = RpdRestClient.rpdLogOut(url, Session.getInstance().getToken());
     				if (response.getStatus() != 200) {
     					ErrorMsg("Logout failed", "Unable to log user out of RPD web service.");
     				}

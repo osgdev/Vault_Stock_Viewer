@@ -6,7 +6,7 @@ import java.lang.management.ManagementFactory;
 
 import com.google.gson.*;
 
-import uk.gov.dvla.osg.rpd.error.BadResponseModelJson;
+import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 
 /**
@@ -40,7 +40,8 @@ public class JsonUtils {
         return gsonBldr.fromJson(jsonFile, VaultStock.class);
     }
     
-    public static BadResponseModelJson getError(String data) {
-        return new Gson().fromJson(data, BadResponseModelJson.class);
+    public static RpdErrorResponse getError(String data) throws JsonIOException, JsonSyntaxException, FileNotFoundException {
+        Gson gsonBldr = new GsonBuilder().registerTypeAdapter(RpdErrorResponse.class, new RpdErrorTypeAdapter()).create();
+        return gsonBldr.fromJson(data, RpdErrorResponse.class);
     }
 }

@@ -17,7 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import uk.gov.dvla.osg.rpd.client.RpdLoginClient;
-import uk.gov.dvla.osg.rpd.error.BadResponseModelJson;
+import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.mainform.MainFormController;
@@ -70,7 +70,8 @@ public class LoginController {
 				// if token wasn't retrieved & not in debug mode, display error dialog
 				if (!token.isPresent() && !DEBUG_MODE) {
 					Platform.runLater(() -> {
-					    BadResponseModelJson loginError = login.getErrorResponse();
+					    RpdErrorResponse loginError = login.getErrorResponse();
+					    LOGGER.error(loginError.toString());
 						ErrorHandler.ErrorMsg(loginError.getCode(), loginError.getMessage(), loginError.getAction());
 						// cleanup fields
 						lblMessage.setText("");

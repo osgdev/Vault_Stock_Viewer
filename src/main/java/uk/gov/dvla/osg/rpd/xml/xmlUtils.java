@@ -6,11 +6,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import uk.gov.dvla.osg.rpd.error.BadResponseModelXml;
+import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 
 public class xmlUtils {
 
-    public BadResponseModelXml getXmlError(String data) throws JsonParseException, JsonMappingException, IOException {
-        return new XmlMapper().readValue(data, BadResponseModelXml.class);
+    public RpdErrorResponse getXmlError(String data) throws JsonParseException, JsonMappingException, IOException {
+        return new XmlMapper().readValue(data, RpdErrorResponse.class);
     }
 }

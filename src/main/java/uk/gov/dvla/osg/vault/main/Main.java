@@ -28,6 +28,10 @@ public class Main extends Application {
     
     public static void main(String[] args) {
         
+        if (args.length != 1) {
+            LOGGER.fatal("Incorrect number of arguments supplied!");
+            System.exit(1);
+        }
         String configFile = args[0];
         boolean propsFileExists = new File(configFile).exists();
         if (!propsFileExists) {
