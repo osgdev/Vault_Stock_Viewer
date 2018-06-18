@@ -57,7 +57,7 @@ public class DataHandler {
                     }
             });           
         }
-        if (cardCount.get() > 1 && volRequired) {    
+        if (cardCount.get() > 0 && volRequired) {    
             for (int i = cardCount.get(); i < 6; i++) {
                 cardDataList.add(new CardData("", ""));
             }
