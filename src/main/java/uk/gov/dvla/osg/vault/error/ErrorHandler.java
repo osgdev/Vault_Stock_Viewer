@@ -42,22 +42,27 @@ public class ErrorHandler {
     public static void ErrorMsg(String errorCode, String errorMsg, String errorAction) {
 
         // create dialog for error message
-        Dialog<ButtonType> dialog = new Dialog<>();
-        // set the title on the window
-        dialog.setTitle("RPD Error");
-        // add logo to dialog
-        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        Image icon = new Image(ErrorHandler.class.getResource("/Images/vault.png").toString());
-        stage.getIcons().add(icon);
-        // add content to the pane
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialogPane.getButtonTypes().add(ButtonType.OK);
-        dialogPane.setHeaderText("Error Code:  " + errorCode);
-        dialogPane.setContentText("Message: " + errorMsg + "\n\nAction: " + errorAction);
-        // display dialog and wait for a button to be clicked
-        Optional<ButtonType> result = dialog.showAndWait();
-        if (result.isPresent() && result.get() != ButtonType.OK) {
-            LOGGER.fatal("ErrorHandler: error closing dialog.");
+        try {
+            Dialog<ButtonType> dialog = new Dialog<>();
+            // set the title on the window
+            dialog.setTitle("RPD Error");
+            // add logo to dialog
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            Image icon = new Image(ErrorHandler.class.getResource("/Images/vault.png").toString());
+            stage.getIcons().add(icon);
+            // add content to the pane
+            DialogPane dialogPane = dialog.getDialogPane();
+            dialogPane.getButtonTypes().add(ButtonType.OK);
+            dialogPane.setHeaderText("Error Code:  " + errorCode);
+            dialogPane.setContentText("Message: " + errorMsg + "\n\nAction: " + errorAction);
+            // display dialog and wait for a button to be clicked
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.isPresent() && result.get() != ButtonType.OK) {
+                LOGGER.fatal("ErrorHandler: error closing dialog.");
+            }
+        } catch (Exception ex) {
+            // TODO Auto-generated catch block
+            ex.printStackTrace();
         }
     }
 }

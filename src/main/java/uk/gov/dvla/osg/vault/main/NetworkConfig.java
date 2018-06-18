@@ -1,10 +1,7 @@
 package uk.gov.dvla.osg.vault.main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,21 +51,27 @@ public class NetworkConfig {
     private String logoutUrl = "";
   
     private NetworkConfig() {
-        Properties properties = new Properties();
+        
+        PropertyLoader loader = null;
         try {
-            InputStream input = new FileInputStream(filename);
-            properties.load(input);
+            loader = new PropertyLoader(filename);
         } catch (IOException ex) {
-            LOGGER.fatal("Unable to load Application Configuration from file - [{}] {}", filename, ex.getMessage());
+            LOGGER.fatal("Unable to load properties from {}", filename);
             System.exit(1);
         }
         
-        protocol = properties.getProperty("protocol");
-        host = properties.getProperty("host");
-        port = properties.getProperty("port");
-        loginUrl = properties.getProperty("loginUrl");
-        logoutUrl = properties.getProperty("logoutUrl");
-        vaultUrl = properties.getProperty("vaultUrl");
+        try {
+            protocol = loader.getProperty("protocol");
+            host = loader.getProperty("host");
+            port = loader.getProperty("port");
+            loginUrl = loader.getProperty("loginUrl");
+            logoutUrl = loader.getProperty("logoutUrl");
+            vaultUrl = loader.getProperty("vaultUrl");
+        } catch (RuntimeException ex) {
+            LOGGER.fatal(ex.getMessage());
+            System.exit(1);
+        }
+
     }
     
     public String getProtocol() {

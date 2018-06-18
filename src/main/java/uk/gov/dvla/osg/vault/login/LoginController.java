@@ -93,7 +93,7 @@ public class LoginController {
 							Parent root = loader.load();
 							Stage submitJobStage = new Stage();
 							// Display logged in user in titlebar
-							submitJobStage.setTitle("Vault Card Stock - User: " + session.getUserName());
+							submitJobStage.setTitle("Vault Card Stock - " + session.getUserName());
 							submitJobStage.getIcons()
 									.add(new Image(getClass().getResourceAsStream("/Images/vault.png")));
 							submitJobStage.setScene(new Scene(root));

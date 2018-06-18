@@ -35,7 +35,12 @@ public class JsonUtils {
     public static VaultStock loadStockFile(String jsonFile) throws JsonIOException, JsonSyntaxException, FileNotFoundException {
         Gson gsonBldr = new GsonBuilder().registerTypeAdapter(VaultStock.class, new EmptyStringAsNullTypeAdapter()).create();
         if (DEBUG_MODE) {
-                return gsonBldr.fromJson(new FileReader(jsonFile), VaultStock.class);
+            try {
+                FileReader fr = new FileReader(jsonFile);
+                return gsonBldr.fromJson(fr, VaultStock.class);
+            } catch (FileNotFoundException ex) {
+                throw ex;
+            }
         }
         return gsonBldr.fromJson(jsonFile, VaultStock.class);
     }

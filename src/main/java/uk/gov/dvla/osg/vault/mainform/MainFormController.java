@@ -1,14 +1,17 @@
 package uk.gov.dvla.osg.vault.mainform;
 
+import java.io.FileNotFoundException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -280,13 +283,17 @@ public class MainFormController {
                 } else {
                     RpdErrorResponse error = vsc.getErrorResponse();
                     LOGGER.error(error.toString());
-                    ErrorHandler.ErrorMsg(error.getCode(), error.getMessage(), error.getAction());
+                    Platform.runLater(() -> {
+                        ErrorHandler.ErrorMsg(error.getCode(), error.getMessage(), error.getAction());
+                    });
                 }
             }
-        } catch (Exception ex) {
-            // Display error msg dialog box to user
-            LOGGER.fatal(ExceptionUtils.getStackTrace(ex));
-            ErrorHandler.ErrorMsg(ex.getClass().getSimpleName(), ex.getMessage());
+        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException ex) {
+            LOGGER.fatal(ex.getMessage());
+            // Display error msg dialog box to user            
+            Platform.runLater(() -> {
+                    ErrorHandler.ErrorMsg(ex.getClass().getSimpleName(), ex.getMessage());
+            });
         }
         return null;
     }
@@ -500,8 +507,7 @@ public class MainFormController {
     }
 
     /**
-     * Files older than 7 days are deleted from the temp dir & then the user is
-     * logged out and application shut down.
+     * user is logged out and application shut down.
      */
     public void logout() {
         // contact RPD on background thread to prevent main window from freezing
