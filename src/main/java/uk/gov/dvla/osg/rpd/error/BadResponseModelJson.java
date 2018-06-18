@@ -7,13 +7,13 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class BadResponseModel {
+public class BadResponseModelJson {
 
     @SerializedName("generalErrors")
     @Expose
     private List<GeneralError> generalErrors = new ArrayList<>();
 
-    public BadResponseModel(String message, String action) {
+    public BadResponseModelJson(String message, String action) {
         
         generalErrors.add(new GeneralError(message, action));
     }

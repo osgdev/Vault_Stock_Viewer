@@ -1,8 +1,18 @@
-#vol {
+#vol 
+{
   -fx-alignment: CENTER_RIGHT;
 }
-.table:focused{
+.table:focused
+{
     -fx-background-color: transparent;
+}
+#totalrow 
+{
+ 	-fx-font-weight: bold;
+}
+.table-row-cell:totalrow
+{
+ 	-fx-font-weight: bold;
 }
 /*
 .table-row-cell:empty {

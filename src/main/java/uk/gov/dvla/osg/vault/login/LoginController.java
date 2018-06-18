@@ -17,7 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import uk.gov.dvla.osg.rpd.client.RpdLoginClient;
-import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.rpd.error.BadResponseModelJson;
 import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.mainform.MainFormController;
@@ -70,7 +70,7 @@ public class LoginController {
 				// if token wasn't retrieved & not in debug mode, display error dialog
 				if (!token.isPresent() && !DEBUG_MODE) {
 					Platform.runLater(() -> {
-					    BadResponseModel loginError = login.getErrorResponse();
+					    BadResponseModelJson loginError = login.getErrorResponse();
 						ErrorHandler.ErrorMsg(loginError.getCode(), loginError.getMessage(), loginError.getAction());
 						// cleanup fields
 						lblMessage.setText("");
@@ -92,16 +92,16 @@ public class LoginController {
 							Parent root = loader.load();
 							Stage submitJobStage = new Stage();
 							// Display logged in user in titlebar
-							submitJobStage.setTitle("Vault Card Stock - " + session.getUserName());
+							submitJobStage.setTitle("Vault Card Stock - User: " + session.getUserName());
 							submitJobStage.getIcons()
 									.add(new Image(getClass().getResourceAsStream("/Images/vault.png")));
 							submitJobStage.setScene(new Scene(root));
-							submitJobStage.show();
 							// force logout by routing the close request to the logout method
 							submitJobStage.setOnCloseRequest(we -> {
 								we.consume();
 								((MainFormController)loader.getController()).logout();
 							});
+							submitJobStage.show();
 							((Stage) btnLogin.getScene().getWindow()).close();
 						} catch (IOException e) {
 							Platform.runLater(() -> {

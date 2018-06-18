@@ -15,14 +15,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import uk.gov.dvla.osg.rpd.client.VaultStockClient;
-import uk.gov.dvla.osg.rpd.error.BadResponseModel;
+import uk.gov.dvla.osg.rpd.error.BadResponseModelXml;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
@@ -34,12 +34,27 @@ import uk.gov.dvla.osg.vault.main.NetworkConfig;
 import uk.gov.dvla.osg.vault.session.Session;
 
 public class MainFormController {
+/*    private final class UpdateTotalRow extends TableRow<CardData> {
+        private final PseudoClass totalRowPseudoClass;
+
+        private UpdateTotalRow(PseudoClass totalRowPseudoClass) {
+            this.totalRowPseudoClass = totalRowPseudoClass;
+        }
+
+        @Override
+        protected void updateItem(CardData person, boolean b) {
+            super.updateItem(person, b);
+            boolean isTotalRow = person.getCardType().equals("TOTAL") ;
+            pseudoClassStateChanged(totalRowPseudoClass, isTotalRow);
+        }
+    }*/
+
     private static final Logger LOGGER = LogManager.getLogger();
     private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
-    
+
     // TOP SECTION
     @FXML
-    private ChoiceBox environmentChoice; 
+    private ChoiceBox environmentChoice;
     @FXML
     private ChoiceBox siteChoice;
     @FXML
@@ -48,7 +63,7 @@ public class MainFormController {
     private Label lblTime;
     @FXML
     private Button refreshBtn;
-    
+
     // TABLES - CARDS IN SCS
     @FXML
     private TableView<CardData> scs_mTachoTable;
@@ -56,56 +71,56 @@ public class MainFormController {
     private TableColumn<CardData, String> scs_mTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_mTachoCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_mBrpTable;
     @FXML
     private TableColumn<CardData, String> scs_mBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_mBrpCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_mPolTable;
     @FXML
     private TableColumn<CardData, String> scs_mPolCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_mPolCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_mDqcTable;
     @FXML
     private TableColumn<CardData, String> scs_mDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_mDqcCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_fTachoTable;
     @FXML
     private TableColumn<CardData, String> scs_fTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_fTachoCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_fBrpTable;
     @FXML
     private TableColumn<CardData, String> scs_fBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_fBrpCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_fPolTable;
     @FXML
     private TableColumn<CardData, String> scs_fPolCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_fPolCol_Vol;
-    
+
     @FXML
     private TableView<CardData> scs_fDqcTable;
     @FXML
     private TableColumn<CardData, String> scs_fDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> scs_fDqcCol_Vol;
-    
+
     // TABLES - CARDS OnCrate
     @FXML
     private TableView<CardData> onCrate_mTachoTable;
@@ -113,57 +128,56 @@ public class MainFormController {
     private TableColumn<CardData, String> onCrate_mTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_mTachoCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_mBrpTable;
     @FXML
     private TableColumn<CardData, String> onCrate_mBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_mBrpCol_Vol;
-    
-    
+
     @FXML
     private TableView<CardData> onCrate_mPolTable;
     @FXML
     private TableColumn<CardData, String> onCrate_mPolCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_mPolCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_mDqcTable;
     @FXML
     private TableColumn<CardData, String> onCrate_mDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_mDqcCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_fTachoTable;
     @FXML
     private TableColumn<CardData, String> onCrate_fTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_fTachoCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_fBrpTable;
     @FXML
     private TableColumn<CardData, String> onCrate_fBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_fBrpCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_fPolTable;
     @FXML
     private TableColumn<CardData, String> onCrate_fPolCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_fPolCol_Vol;
-    
+
     @FXML
     private TableView<CardData> onCrate_fDqcTable;
     @FXML
     private TableColumn<CardData, String> onCrate_fDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> onCrate_fDqcCol_Vol;
-    
+
     // TABLES - CARDS UCI
     @FXML
     private TableView<CardData> uci_mTachoTable;
@@ -171,84 +185,87 @@ public class MainFormController {
     private TableColumn<CardData, String> uci_mTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_mTachoCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_mBrpTable;
     @FXML
     private TableColumn<CardData, String> uci_mBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_mBrpCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_mPolTable;
     @FXML
     private TableColumn<CardData, String> uci_mPolCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_mPolCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_mDqcTable;
     @FXML
     private TableColumn<CardData, String> uci_mDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_mDqcCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_fTachoTable;
     @FXML
     private TableColumn<CardData, String> uci_fTachoCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_fTachoCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_fBrpTable;
     @FXML
     private TableColumn<CardData, String> uci_fBrpCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_fBrpCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_fPolTable;
     @FXML
     private TableColumn<CardData, String> uci_fPolCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_fPolCol_uci;
-    
+
     @FXML
     private TableView<CardData> uci_fDqcTable;
     @FXML
     private TableColumn<CardData, String> uci_fDqcCol_Card;
     @FXML
     private TableColumn<CardData, String> uci_fDqcCol_uci;
-    
+
     private VaultStock vaultStock;
     private DataHandler dataHandler;
-    
-    
+
     @FXML
     private void initialize() {
         // Add image to button
-        Image image = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
-        refreshBtn.setGraphic(new ImageView(image));
-        // Load Json File        
-        updateTimeLabel();
+        setRefreshButtonImage();
+        setupRefreshBtn();        
         loadChoiceBoxes();
         setCellValueFactories();
-        setupRefreshBtn();
-        refreshJson();
+        // Load Json File
+        //refreshJson();
+        highlightTotals();
+        refreshBtn.fire();
     }
 
-    @FXML 
+    private void setRefreshButtonImage() {
+        Image buttonImage = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
+        refreshBtn.setGraphic(new ImageView(buttonImage));
+    }
+
+    @FXML
     private void refreshJson() {
         vaultStock = loadJsonData();
         if (vaultStock != null) {
             refreshData();
         }
         updateTimeLabel();
-        // Move focus to read only control to remove the focus highlight from button
-        lblTime.requestFocus();
+        
     }
-    
+
     private void refreshData() {
         if (vaultStock != null) {
             if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
@@ -259,15 +276,16 @@ public class MainFormController {
             setupTableData();
         }
     }
-    
+
     private VaultStock loadJsonData() {
         try {
             String file = "";
-            if (DEBUG_MODE) { 
-                //file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
-                //file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
+            if (DEBUG_MODE) {
+                // file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
+                // file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
                 file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
-                //file = "{\"stockTotals\":{\"test\": null,\"production\":{\"cardStock\":{\"firstUCI\":\"RG9963289\",\"cardTypeName\":\"BID\",\"volumes\":[{\"content\":\"0\",\"status\":\"InVault\"},{\"content\":\"0\",\"status\":\"Quarantined\"},{\"content\":\"212\",\"status\":\"Opened\"},{\"content\":\"0\",\"status\":\"OnCrate\"},{\"content\":\"0\",\"status\":\"InTransit\"}],\"className\":\"BID\",\"location\":\"m\"}}}}";
+                // file = "{\"stockTotals\":{\"test\":
+                // null,\"production\":{\"cardStock\":{\"firstUCI\":\"RG9963289\",\"cardTypeName\":\"BID\",\"volumes\":[{\"content\":\"0\",\"status\":\"InVault\"},{\"content\":\"0\",\"status\":\"Quarantined\"},{\"content\":\"212\",\"status\":\"Opened\"},{\"content\":\"0\",\"status\":\"OnCrate\"},{\"content\":\"0\",\"status\":\"InTransit\"}],\"className\":\"BID\",\"location\":\"m\"}}}}";
                 return JsonUtils.loadStockFile(file);
             } else {
                 VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
@@ -275,8 +293,8 @@ public class MainFormController {
                 if (vs.isPresent()) {
                     return vs.get();
                 } else {
-                    BadResponseModel brm = vsc.getErrorResponse();
-                    ErrorHandler.ErrorMsg(brm.getCode(), brm.getMessage(), brm.getAction());
+                    BadResponseModelXml brm = vsc.getErrorResponse();
+                    ErrorHandler.ErrorMsg(brm.getMessage().getCode(), brm.getMessage().getMessage(), brm.getMessage().getAction());
                 }
             }
         } catch (Exception ex) {
@@ -292,45 +310,46 @@ public class MainFormController {
         LocalDateTime now = LocalDateTime.now();
         lblTime.setText(dtf.format(now));
     }
-    
+
     private void loadChoiceBoxes() {
         ObservableList<String> environmentList = FXCollections.observableArrayList("PRODUCTION", "TEST");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
-        ObservableList<String> cardList = FXCollections.observableArrayList("ALL","TACHO", "BRP", "POL", "DQC");
-        
+        ObservableList<String> cardList = FXCollections.observableArrayList("ALL", "TACHO", "BRP", "POL", "DQC");
+
         environmentChoice.setValue(environmentList.get(0));
         environmentChoice.setItems(environmentList);
-        environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
-            environmentChoice.getSelectionModel().select((int)newValue);
+        environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
+            environmentChoice.getSelectionModel().select((int) newValue);
             refreshData();
         });
-   
+
         siteChoice.setValue(siteList.get(0));
         siteChoice.setItems(siteList);
-        siteChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
-            siteChoice.getSelectionModel().select((int)newValue);
+        siteChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
+            siteChoice.getSelectionModel().select((int) newValue);
         });
-        
+
         cardChoice.setValue(cardList.get(0));
         cardChoice.setItems(cardList);
-        cardChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue,  newValue) -> {
-            cardChoice.getSelectionModel().select((int)newValue);
+        cardChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
+            cardChoice.getSelectionModel().select((int) newValue);
         });
     }
 
     private void setupTableData() {
-        setDataSCS();        
+        //setupTotalRows();
+        setDataSCS();
         setDataOnCrate();
         setTestDataUCI();
     }
 
     private void setCellValueFactories() {
-        
+
         PropertyValueFactory<CardData, String> propValCardType = new PropertyValueFactory<>("cardType");
         PropertyValueFactory<CardData, String> propValCardVol = new PropertyValueFactory<>("volume");
         PropertyValueFactory<CardData, String> propValCardUci = new PropertyValueFactory<>("uci");
         // SCS - MORRISTON
-        scs_mTachoCol_Card.setCellValueFactory(propValCardType);
+        scs_mTachoCol_Card.setCellValueFactory(propValCardType);        
         scs_mTachoCol_Vol.setCellValueFactory(propValCardVol);
         scs_mBrpCol_Card.setCellValueFactory(propValCardType);
         scs_mBrpCol_Vol.setCellValueFactory(propValCardVol);
@@ -384,7 +403,7 @@ public class MainFormController {
         uci_fDqcCol_Card.setCellValueFactory(propValCardType);
         uci_fDqcCol_uci.setCellValueFactory(propValCardUci);
     }
-    
+
     private void setDataSCS() {
         scs_mTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.M));
         scs_mBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.M));
@@ -393,9 +412,9 @@ public class MainFormController {
         scs_fTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.F));
         scs_fBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.F));
         scs_fPolTable.setItems(dataHandler.getScsData(CardClass.POL, Site.F));
-        scs_fDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.F));
+        scs_fDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.F));    
     }
-   
+
     private void setDataOnCrate() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateData(CardClass.TACHO, Site.M));
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateData(CardClass.BID, Site.M));
@@ -406,7 +425,7 @@ public class MainFormController {
         onCrate_fPolTable.setItems(dataHandler.getOnCrateData(CardClass.POL, Site.F));
         onCrate_fDqcTable.setItems(dataHandler.getOnCrateData(CardClass.DQC, Site.F));
     }
-    
+
     private void setTestDataUCI() {
         uci_mTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.M));
         uci_mBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.M));
@@ -417,85 +436,93 @@ public class MainFormController {
         uci_fPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.F));
         uci_fDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.F));
     }
-    
+
     private void setupRefreshBtn() {
-        
         AtomicInteger taskExecution = new AtomicInteger(0);
-        
+
         refreshBtn.setOnAction(e -> {
-            Alert alert = new Alert(
-                    Alert.AlertType.INFORMATION,
-                    "Download in progress",
-                    ButtonType.CANCEL
-            );
-            alert.setTitle("Downloading Vault Stock");
-            alert.setHeaderText("Please wait... ");
             ProgressIndicator progressIndicator = new ProgressIndicator();
-            alert.setGraphic(progressIndicator);
- 
+            refreshBtn.setGraphic(progressIndicator);
+
             Task<Void> task = new Task<Void>() {
                 {
                     setOnFailed(a -> {
-                        alert.close();
-                        updateMessage("Failed");
+                        updateMessage("Failed!");
+                        setRefreshButtonImage();
                     });
                     setOnSucceeded(a -> {
-                        alert.close();
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
-                        updateMessage(dtf.format(now));
+                        updateMessage("Last Refresh:\n" + dtf.format(now));
+                        setRefreshButtonImage();
                     });
                     setOnCancelled(a -> {
-                        alert.close();
                         updateMessage("Cancelled");
+                        setRefreshButtonImage();
                     });
                 }
- 
+
                 @Override
                 protected Void call() throws Exception {
-                    updateMessage("Processing");
+                    updateMessage("Downloading... ");
                     // Short pause
-                    Thread.sleep(2000);
-                    
+                    if (DEBUG_MODE) {
+                        Thread.sleep(2000);
+                    }
+
                     vaultStock = loadJsonData();
-                    
+
                     if (vaultStock != null) {
                         refreshData();
                     }
-                    //lblTime.requestFocus();
-                    
+
                     return null;
                 }
             };
- 
+
             lblTime.textProperty().unbind();
             lblTime.textProperty().bind(task.messageProperty());
- 
-            Thread taskThread = new Thread(
-                    task,
-                    "task-thread-" + taskExecution.getAndIncrement()
-            );
+
+            Thread taskThread = new Thread(task, "task-thread-" + taskExecution.getAndIncrement());
             taskThread.start();
- 
-            alert.initOwner((Stage) refreshBtn.getScene().getWindow());
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.CANCEL && task.isRunning()) {
-                task.cancel();
-            }
+
             // Move focus to read only control to remove the focus highlight from button
             lblTime.requestFocus();
         });
     }
+
+    public void highlightTotals() {
+        final PseudoClass totalRowPseudoClass = PseudoClass.getPseudoClass("totalrow");
+        // In Vault Tab
+        scs_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_mDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_mPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_fTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        scs_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        // On Crate Tab
+        onCrate_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_mDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_mPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_fTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onCrate_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+    }
+
     /**
      * Files older than 7 days are deleted from the temp dir & then the user is
      * logged out and application shut down.
      */
     public void logout() {
         // contact RPD on background thread to prevent main window from freezing
-            new Thread(() -> {
-                Platform.runLater(() -> {
-                    LogOut.logout(NetworkConfig.getInstance());
-                });
-            }).start();
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                LogOut.logout(NetworkConfig.getInstance());
+            });
+        }).start();
     }
 }
