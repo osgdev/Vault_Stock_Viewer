@@ -24,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import uk.gov.dvla.osg.rpd.client.VaultStockClient;
 import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
@@ -50,7 +51,19 @@ public class MainFormController {
     private Label lblTime;
     @FXML
     private Button refreshBtn;
-
+    @FXML
+    private GridPane scs_GridPane;
+    @FXML
+    private GridPane onCrate_GridPane;
+    @FXML
+    private Label lblMorriston_scs;
+    @FXML
+    private Label lblFforestfach_scs;
+    @FXML
+    private Label lblMorriston_onCrate;
+    @FXML
+    private Label lblFforestfach_onCrate;
+    
     // TABLES - CARDS IN SCS
     @FXML
     private TableView<CardData> scs_mTachoTable;
@@ -229,11 +242,11 @@ public class MainFormController {
     private void initialize() {
         // Add image to button
         setRefreshButtonImage();
-        setupRefreshBtn();        
+        assignRefreshBtnAction();        
         loadChoiceBoxes();
         setCellValueFactories();
         highlightTotals();
-        // Load Json File
+        // Download data from vault and load into tables
         refreshBtn.fire();
     }
 
@@ -242,27 +255,24 @@ public class MainFormController {
         refreshBtn.setGraphic(new ImageView(buttonImage));
     }
 
-    @FXML
-    private void refreshJson() {
-        vaultStock = loadJsonData();
-        if (vaultStock != null) {
-            refreshData();
-        }
-        updateTimeLabel();
-        
-    }
-
-    private void refreshData() {
+    private void checkSite() {
         if (vaultStock != null) {
             if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
                 dataHandler = new DataHandler(vaultStock.getStockTotals().getTest());
             } else {
                 dataHandler = new DataHandler(vaultStock.getStockTotals().getProduction());
             }
-            setupTableData();
         }
     }
 
+    private void setupTableData() {
+        if (siteChoice.getSelectionModel().getSelectedItem().equals("COMBINED")) {
+            setupTableData_Combined();
+        }else {
+            setupTableData_BothSites();
+        }
+    }
+    
     private VaultStock loadJsonData() {
         try {
             String file = "";
@@ -296,12 +306,6 @@ public class MainFormController {
         return null;
     }
 
-    private void updateTimeLabel() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        lblTime.setText(dtf.format(now));
-    }
-
     private void loadChoiceBoxes() {
         ObservableList<String> environmentList = FXCollections.observableArrayList("PRODUCTION", "TEST");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
@@ -310,22 +314,18 @@ public class MainFormController {
         environmentChoice.getSelectionModel().selectFirst();
         environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
             environmentChoice.getSelectionModel().select((int) newValue);
-            refreshData();
+            checkSite();
+            setupTableData();
         });
 
         siteChoice.setItems(siteList);
         siteChoice.getSelectionModel().selectFirst();
         siteChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
             siteChoice.getSelectionModel().select((int) newValue);
+            checkSite();
+            setupTableData();
         });
 
-    }
-
-    private void setupTableData() {
-        //setupTotalRows();
-        setDataSCS();
-        setDataOnCrate();
-        setTestDataUCI();
     }
 
     private void setCellValueFactories() {
@@ -389,26 +389,70 @@ public class MainFormController {
         uci_fDqcCol_uci.setCellValueFactory(propValCardUci);
     }
 
-    private void setDataSCS() {
-        scs_mTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.M));
-        scs_mBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.M));
-        scs_mPolTable.setItems(dataHandler.getScsData(CardClass.POL, Site.M));
-        scs_mDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.M));
-        scs_fTachoTable.setItems(dataHandler.getScsData(CardClass.TACHO, Site.F));
-        scs_fBrpTable.setItems(dataHandler.getScsData(CardClass.BID, Site.F));
-        scs_fPolTable.setItems(dataHandler.getScsData(CardClass.POL, Site.F));
-        scs_fDqcTable.setItems(dataHandler.getScsData(CardClass.DQC, Site.F));    
+    private void setupTableData_BothSites() {
+        lblMorriston_scs.setText("MORRISTON");
+        lblFforestfach_scs.setText("FFORESTFACH");
+        scs_GridPane.setRowSpan(lblMorriston_scs, 1);
+
+        lblMorriston_onCrate.setText("MORRISTON");
+        lblFforestfach_onCrate.setText("FFORESTFACH");
+        onCrate_GridPane.setRowSpan(lblMorriston_onCrate, 1);
+        
+        setDataSCS_BothSites();
+        setDataOnCrate_BothSites();
+        setTestDataUCI();
+    }
+    
+    private void setDataSCS_BothSites() {
+        scs_mTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.M));
+        scs_GridPane.setRowSpan(scs_mTachoTable , 1);
+        
+        scs_mBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.M));
+        scs_GridPane.setRowSpan(scs_mBrpTable , 1);
+        
+        scs_mPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.M));
+        scs_GridPane.setRowSpan(scs_mPolTable , 1);
+        
+        scs_mDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.M));
+        scs_GridPane.setRowSpan(scs_mDqcTable , 1);
+        
+        scs_fTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.F));
+        scs_fTachoTable.setVisible(true);
+        
+        scs_fBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.F));
+        scs_fBrpTable.setVisible(true);
+        
+        scs_fPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.F));
+        scs_fPolTable.setVisible(true);
+        
+        scs_fDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.F)); 
+        scs_fDqcTable.setVisible(true);
     }
 
-    private void setDataOnCrate() {
-        onCrate_mTachoTable.setItems(dataHandler.getOnCrateData(CardClass.TACHO, Site.M));
-        onCrate_mBrpTable.setItems(dataHandler.getOnCrateData(CardClass.BID, Site.M));
-        onCrate_mPolTable.setItems(dataHandler.getOnCrateData(CardClass.POL, Site.M));
-        onCrate_mDqcTable.setItems(dataHandler.getOnCrateData(CardClass.DQC, Site.M));
-        onCrate_fTachoTable.setItems(dataHandler.getOnCrateData(CardClass.TACHO, Site.F));
-        onCrate_fBrpTable.setItems(dataHandler.getOnCrateData(CardClass.BID, Site.F));
-        onCrate_fPolTable.setItems(dataHandler.getOnCrateData(CardClass.POL, Site.F));
-        onCrate_fDqcTable.setItems(dataHandler.getOnCrateData(CardClass.DQC, Site.F));
+    private void setDataOnCrate_BothSites() {
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.M));
+        onCrate_GridPane.setRowSpan(onCrate_mTachoTable, 1);
+        
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.M));
+        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 1);
+        
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.M));
+        onCrate_GridPane.setRowSpan(onCrate_mPolTable, 1);
+        
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.M));
+        onCrate_GridPane.setRowSpan(onCrate_mDqcTable, 1);
+        
+        onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.F));
+        onCrate_fTachoTable.setVisible(true);
+        
+        onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.F));
+        onCrate_fBrpTable.setVisible(true);
+        
+        onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.F));
+        onCrate_fPolTable.setVisible(true);
+        
+        onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.F));
+        onCrate_fDqcTable.setVisible(true);
     }
 
     private void setTestDataUCI() {
@@ -422,7 +466,59 @@ public class MainFormController {
         uci_fDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.F));
     }
 
-    private void setupRefreshBtn() {
+    private void setupTableData_Combined() {
+        lblMorriston_scs.setText("MORRISTON\n&\nFFORESTFACH");
+        lblFforestfach_scs.setText("");
+        scs_GridPane.setRowSpan(lblMorriston_scs, 2);
+
+        lblMorriston_onCrate.setText("MORRISTON\n&\nFFORESTFACH");
+        lblFforestfach_onCrate.setText("");
+        onCrate_GridPane.setRowSpan(lblMorriston_onCrate, 2);
+        
+        setDataSCS_Combined();
+        setDataOnCrate_Combined();
+        setTestDataUCI();
+    }
+    
+    private void setDataSCS_Combined() {
+        scs_mTachoTable.setItems(dataHandler.getScsDataForCombined(CardClass.TACHO));
+        scs_GridPane.setRowSpan(scs_mTachoTable, 2);
+        
+        scs_mBrpTable.setItems(dataHandler.getScsDataForCombined(CardClass.BID));
+        scs_GridPane.setRowSpan(scs_mBrpTable, 2);
+        
+        scs_mPolTable.setItems(dataHandler.getScsDataForCombined(CardClass.POL));
+        scs_GridPane.setRowSpan(scs_mPolTable, 2);
+        
+        scs_mDqcTable.setItems(dataHandler.getScsDataForCombined(CardClass.DQC));
+        scs_GridPane.setRowSpan(scs_mDqcTable, 2);
+        
+        scs_fTachoTable.setVisible(false);
+        scs_fBrpTable.setVisible(false);
+        scs_fPolTable.setVisible(false);
+        scs_fDqcTable.setVisible(false);
+    }
+    
+    private void setDataOnCrate_Combined() {
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.TACHO));
+        onCrate_GridPane.setRowSpan(onCrate_mTachoTable, 2);
+        
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.BID));
+        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 2);
+        
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
+        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 2);
+        
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
+        onCrate_GridPane.setRowSpan(onCrate_mDqcTable, 2);
+        
+        onCrate_fTachoTable.setVisible(false);
+        onCrate_fBrpTable.setVisible(false);
+        onCrate_fPolTable.setVisible(false);
+        onCrate_fDqcTable.setVisible(false);
+    }
+    
+    private void assignRefreshBtnAction() {
         AtomicInteger taskExecution = new AtomicInteger(0);
 
         refreshBtn.setOnAction(e -> {
@@ -458,7 +554,8 @@ public class MainFormController {
                     vaultStock = loadJsonData();
 
                     if (vaultStock != null) {
-                        refreshData();
+                        checkSite();
+                        setupTableData();
                     }
 
                     return null;

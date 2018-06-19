@@ -16,7 +16,7 @@ public class CardStock {
     private String firstUCI;
     @SerializedName("cardTypeName")
     @Expose
-    private String cardTypeName;
+    private String cardType;
     @SerializedName("volumes")
     @Expose
     private List<Volume> volumes = null;
@@ -31,8 +31,8 @@ public class CardStock {
         return firstUCI;
     }
 
-    public String getCardTypeName() {
-        return cardTypeName;
+    public String getCardType() {
+        return cardType;
     }
 
     public List<Volume> getVolumes() {
