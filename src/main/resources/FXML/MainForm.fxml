@@ -383,7 +383,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="uci_mTachoCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_mTachoCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -395,7 +395,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="uci_mBrpCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_mBrpCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -407,7 +407,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="uci_mPolCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_mPolCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -419,7 +419,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_mDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="uci_mDqcCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_mDqcCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -431,7 +431,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
-                            <TableColumn fx:id="uci_fTachoCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_fTachoCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -446,7 +446,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fBrpCol_Card" prefWidth="75.0" text="BRP" />
-                            <TableColumn fx:id="uci_fBrpCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_fBrpCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -458,7 +458,7 @@
                         <TableView fx:id="uci_fPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <columns>
                             <TableColumn fx:id="uci_fPolCol_Card" prefWidth="75.0" text="POL" />
-                            <TableColumn fx:id="uci_fPolCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_fPolCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -473,7 +473,7 @@
     						</placeholder>
                           <columns>
                             <TableColumn fx:id="uci_fDqcCol_Card" prefWidth="75.0" text="DQC" />
-                            <TableColumn fx:id="uci_fDqcCol_uci" prefWidth="75.0" text="FIRST UCI" />
+                            <TableColumn id="vol" fx:id="uci_fDqcCol_uci" prefWidth="75.0" text="FIRST UCI" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

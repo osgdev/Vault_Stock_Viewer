@@ -6,10 +6,6 @@
 {
     -fx-background-color: transparent;
 }
-#totalrow 
-{
- 	-fx-font-weight: bold;
-}
 .table-row-cell:totalrow
 {
  	-fx-font-weight: bold;
