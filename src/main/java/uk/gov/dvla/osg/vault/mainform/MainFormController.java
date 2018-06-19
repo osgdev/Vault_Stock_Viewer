@@ -47,8 +47,6 @@ public class MainFormController {
     @FXML
     private ChoiceBox siteChoice;
     @FXML
-    private ChoiceBox cardChoice;
-    @FXML
     private Label lblTime;
     @FXML
     private Button refreshBtn;
@@ -292,7 +290,7 @@ public class MainFormController {
             LOGGER.fatal(ex.getMessage());
             // Display error msg dialog box to user            
             Platform.runLater(() -> {
-                    ErrorHandler.ErrorMsg(ex.getClass().getSimpleName(), ex.getMessage());
+                    ErrorHandler.ErrorMsg("An error occured while connecting to the vault.", ex.getMessage());
             });
         }
         return null;
@@ -307,26 +305,20 @@ public class MainFormController {
     private void loadChoiceBoxes() {
         ObservableList<String> environmentList = FXCollections.observableArrayList("PRODUCTION", "TEST");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
-        ObservableList<String> cardList = FXCollections.observableArrayList("ALL", "TACHO", "BRP", "POL", "DQC");
 
-        environmentChoice.setValue(environmentList.get(0));
         environmentChoice.setItems(environmentList);
+        environmentChoice.getSelectionModel().selectFirst();
         environmentChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
             environmentChoice.getSelectionModel().select((int) newValue);
             refreshData();
         });
 
-        siteChoice.setValue(siteList.get(0));
         siteChoice.setItems(siteList);
+        siteChoice.getSelectionModel().selectFirst();
         siteChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
             siteChoice.getSelectionModel().select((int) newValue);
         });
 
-        cardChoice.setValue(cardList.get(0));
-        cardChoice.setItems(cardList);
-        cardChoice.getSelectionModel().selectedIndexProperty().addListener((ChangeListener) (observable, oldValue, newValue) -> {
-            cardChoice.getSelectionModel().select((int) newValue);
-        });
     }
 
     private void setupTableData() {
