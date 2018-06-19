@@ -268,20 +268,17 @@ public class MainFormController {
     private void setupTableData() {
         if (siteChoice.getSelectionModel().getSelectedItem().equals("COMBINED")) {
             setupTableData_Combined();
-        }else {
+        } else {
             setupTableData_BothSites();
         }
     }
     
     private VaultStock loadJsonData() {
         try {
-            String file = "";
             if (DEBUG_MODE) {
-                // file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
-                // file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
-                file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
-                // file = "{\"stockTotals\":{\"test\":
-                // null,\"production\":{\"cardStock\":{\"firstUCI\":\"RG9963289\",\"cardTypeName\":\"BID\",\"volumes\":[{\"content\":\"0\",\"status\":\"InVault\"},{\"content\":\"0\",\"status\":\"Quarantined\"},{\"content\":\"212\",\"status\":\"Opened\"},{\"content\":\"0\",\"status\":\"OnCrate\"},{\"content\":\"0\",\"status\":\"InTransit\"}],\"className\":\"BID\",\"location\":\"m\"}}}}";
+                //String file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
+                // String file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
+                String file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
                 return JsonUtils.loadStockFile(file);
             } else {
                 VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
@@ -507,7 +504,7 @@ public class MainFormController {
         onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 2);
         
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
-        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 2);
+        onCrate_GridPane.setRowSpan(onCrate_mPolTable, 2);
         
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
         onCrate_GridPane.setRowSpan(onCrate_mDqcTable, 2);

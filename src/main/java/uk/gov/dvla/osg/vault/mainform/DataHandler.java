@@ -59,7 +59,6 @@ public class DataHandler {
 
         ObservableList<CardData> cardDataList = FXCollections.observableArrayList();
         // model may be null when there are no cards for environment
-        AtomicInteger cardCount = new AtomicInteger(0);
         AtomicInteger totalVolume = new AtomicInteger(0);
         Set<String> addedCards = new HashSet<>();
         
@@ -67,7 +66,8 @@ public class DataHandler {
             model.getCardStock().stream()
                 .filter(card -> card.getCardClass().equals(cardClass))
                 .filter(sitePredicate)
-                .forEachOrdered(card -> {                    
+                .forEachOrdered(card -> {   
+                    
                     if (addedCards.add(card.getCardType())) {
                         data = new CardData(card.getCardType(), card.getFirstUCI());
                     } else {
@@ -77,27 +77,23 @@ public class DataHandler {
                             }
                         }
                         cardDataList.remove(data);
-                        cardCount.decrementAndGet();
                    }
-                                 
-                    card.getVolumes().stream().filter(filterPredicate).forEach(volume -> {
+                    
+                   card.getVolumes().stream().filter(filterPredicate).forEach(volume -> {
                         data.increaseVolume(volume.getContent());
                         totalVolume.addAndGet(volume.getContent());
                     });
+                    
                     if (!data.getVolume().equals("")) {
                         cardDataList.add(data);
-                        cardCount.incrementAndGet();
                     }
             });           
         }
-        if (cardCount.get() > 0 && totalRequired) {
-            int rowsToFill = TOTALROW - cardCount.get();
-            
-            if (rowsToFill > 0) {
+        if (cardDataList.size() > 0 && totalRequired) {
+            int rowsToFill = TOTALROW - cardDataList.size();
                 for (int i = 0; i < rowsToFill; i++) {
                     cardDataList.add(new CardData("", ""));
                 } 
-            }
             CardData total = new CardData("TOTAL", "");
             total.increaseVolume(totalVolume.get());
             cardDataList.add(total);
