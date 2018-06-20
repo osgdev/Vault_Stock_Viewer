@@ -2,7 +2,6 @@ package uk.gov.dvla.osg.vault.mainform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -634,14 +633,17 @@ public class MainFormController {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("_ddMMyyyy_HHmmss");
         LocalDateTime now = LocalDateTime.now();
-        File file = new File("C:\\temp\\snapshot"+dtf.format(now)+".png");
-
+        File file = new File("D:\\temp\\snapshot"+dtf.format(now)+".png");
+        
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
             lblPrint.setText("Saved:\n"+file.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (Exception ex) {
             LOGGER.error("Unable to save screenshot image to {}", file.getAbsolutePath());
-            lblPrint.setText("Unable to save screenshot.");
+            Platform.runLater(() -> {
+                lblPrint.setText("Unable to save screenshot.");
+                ErrorHandler.ErrorMsg("File Save Error", "An error occured while saving sreenshot to "+ file.getAbsolutePath(),"Please be patient while we fix the issue.");
+            });
         }    
 
         lblPrint.setOpacity(1);
