@@ -1,11 +1,15 @@
 package uk.gov.dvla.osg.vault.mainform;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,18 +17,23 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.css.PseudoClass;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
+import javafx.util.Duration;
 import uk.gov.dvla.osg.rpd.client.VaultStockClient;
 import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
@@ -48,13 +57,26 @@ public class MainFormController {
     @FXML
     private ChoiceBox siteChoice;
     @FXML
+    private Label lblPrint;
+    @FXML
+    private Button btnPrint;
+    @FXML
     private Label lblTime;
     @FXML
     private Button refreshBtn;
     @FXML
-    private GridPane scs_GridPane;
+    private Tab tabOnShelf;
     @FXML
-    private GridPane onCrate_GridPane;
+    private Tab tabInCrate;
+    @FXML
+    private Tab tabFirstUci;
+    @FXML
+    private GridPane gridOnShelf;
+    @FXML
+    private GridPane gridInCrate;
+    @FXML
+    private GridPane gridFirstUci;
+    
     @FXML
     private Label lblMorriston_scs;
     @FXML
@@ -241,6 +263,7 @@ public class MainFormController {
     @FXML
     private void initialize() {
         // Add image to button
+        setPrintButtonImage();
         setRefreshButtonImage();
         assignRefreshBtnAction();        
         loadChoiceBoxes();
@@ -250,6 +273,11 @@ public class MainFormController {
         refreshBtn.fire();
     }
 
+    private void setPrintButtonImage() {
+        Image buttonImage = new Image(getClass().getResourceAsStream("/Images/print.png"));
+        btnPrint.setGraphic(new ImageView(buttonImage));
+    }
+    
     private void setRefreshButtonImage() {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
         refreshBtn.setGraphic(new ImageView(buttonImage));
@@ -389,11 +417,11 @@ public class MainFormController {
     private void setupTableData_BothSites() {
         lblMorriston_scs.setText("MORRISTON");
         lblFforestfach_scs.setText("FFORESTFACH");
-        scs_GridPane.setRowSpan(lblMorriston_scs, 1);
+        gridOnShelf.setRowSpan(lblMorriston_scs, 1);
 
         lblMorriston_onCrate.setText("MORRISTON");
         lblFforestfach_onCrate.setText("FFORESTFACH");
-        onCrate_GridPane.setRowSpan(lblMorriston_onCrate, 1);
+        gridInCrate.setRowSpan(lblMorriston_onCrate, 1);
         
         setDataSCS_BothSites();
         setDataOnCrate_BothSites();
@@ -402,16 +430,16 @@ public class MainFormController {
     
     private void setDataSCS_BothSites() {
         scs_mTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.M));
-        scs_GridPane.setRowSpan(scs_mTachoTable , 1);
+        gridOnShelf.setRowSpan(scs_mTachoTable , 1);
         
         scs_mBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.M));
-        scs_GridPane.setRowSpan(scs_mBrpTable , 1);
+        gridOnShelf.setRowSpan(scs_mBrpTable , 1);
         
         scs_mPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.M));
-        scs_GridPane.setRowSpan(scs_mPolTable , 1);
+        gridOnShelf.setRowSpan(scs_mPolTable , 1);
         
         scs_mDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.M));
-        scs_GridPane.setRowSpan(scs_mDqcTable , 1);
+        gridOnShelf.setRowSpan(scs_mDqcTable , 1);
         
         scs_fTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.F));
         scs_fTachoTable.setVisible(true);
@@ -428,16 +456,16 @@ public class MainFormController {
 
     private void setDataOnCrate_BothSites() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.M));
-        onCrate_GridPane.setRowSpan(onCrate_mTachoTable, 1);
+        gridInCrate.setRowSpan(onCrate_mTachoTable, 1);
         
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.M));
-        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 1);
+        gridInCrate.setRowSpan(onCrate_mBrpTable, 1);
         
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.M));
-        onCrate_GridPane.setRowSpan(onCrate_mPolTable, 1);
+        gridInCrate.setRowSpan(onCrate_mPolTable, 1);
         
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.M));
-        onCrate_GridPane.setRowSpan(onCrate_mDqcTable, 1);
+        gridInCrate.setRowSpan(onCrate_mDqcTable, 1);
         
         onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.F));
         onCrate_fTachoTable.setVisible(true);
@@ -466,11 +494,11 @@ public class MainFormController {
     private void setupTableData_Combined() {
         lblMorriston_scs.setText("MORRISTON\n&\nFFORESTFACH");
         lblFforestfach_scs.setText("");
-        scs_GridPane.setRowSpan(lblMorriston_scs, 2);
+        gridOnShelf.setRowSpan(lblMorriston_scs, 2);
 
         lblMorriston_onCrate.setText("MORRISTON\n&\nFFORESTFACH");
         lblFforestfach_onCrate.setText("");
-        onCrate_GridPane.setRowSpan(lblMorriston_onCrate, 2);
+        gridInCrate.setRowSpan(lblMorriston_onCrate, 2);
         
         setDataSCS_Combined();
         setDataOnCrate_Combined();
@@ -479,16 +507,16 @@ public class MainFormController {
     
     private void setDataSCS_Combined() {
         scs_mTachoTable.setItems(dataHandler.getScsDataForCombined(CardClass.TACHO));
-        scs_GridPane.setRowSpan(scs_mTachoTable, 2);
+        gridOnShelf.setRowSpan(scs_mTachoTable, 2);
         
         scs_mBrpTable.setItems(dataHandler.getScsDataForCombined(CardClass.BID));
-        scs_GridPane.setRowSpan(scs_mBrpTable, 2);
+        gridOnShelf.setRowSpan(scs_mBrpTable, 2);
         
         scs_mPolTable.setItems(dataHandler.getScsDataForCombined(CardClass.POL));
-        scs_GridPane.setRowSpan(scs_mPolTable, 2);
+        gridOnShelf.setRowSpan(scs_mPolTable, 2);
         
         scs_mDqcTable.setItems(dataHandler.getScsDataForCombined(CardClass.DQC));
-        scs_GridPane.setRowSpan(scs_mDqcTable, 2);
+        gridOnShelf.setRowSpan(scs_mDqcTable, 2);
         
         scs_fTachoTable.setVisible(false);
         scs_fBrpTable.setVisible(false);
@@ -498,16 +526,16 @@ public class MainFormController {
     
     private void setDataOnCrate_Combined() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.TACHO));
-        onCrate_GridPane.setRowSpan(onCrate_mTachoTable, 2);
+        gridInCrate.setRowSpan(onCrate_mTachoTable, 2);
         
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.BID));
-        onCrate_GridPane.setRowSpan(onCrate_mBrpTable, 2);
+        gridInCrate.setRowSpan(onCrate_mBrpTable, 2);
         
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
-        onCrate_GridPane.setRowSpan(onCrate_mPolTable, 2);
+        gridInCrate.setRowSpan(onCrate_mPolTable, 2);
         
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
-        onCrate_GridPane.setRowSpan(onCrate_mDqcTable, 2);
+        gridInCrate.setRowSpan(onCrate_mDqcTable, 2);
         
         onCrate_fTachoTable.setVisible(false);
         onCrate_fBrpTable.setVisible(false);
@@ -590,6 +618,38 @@ public class MainFormController {
         onCrate_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         onCrate_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         onCrate_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+    }
+
+    @FXML
+    private void print() {
+        WritableImage image;
+        
+        if (tabOnShelf.isSelected()) {
+            image = gridOnShelf.snapshot(new SnapshotParameters(), null);    
+        } else if (tabInCrate.isSelected()) {
+            image = gridInCrate.snapshot(new SnapshotParameters(), null);  
+        } else {
+            image = gridFirstUci.snapshot(new SnapshotParameters(), null);  
+        }
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("_ddMMyyyy_HHmmss");
+        LocalDateTime now = LocalDateTime.now();
+        File file = new File("C:\\temp\\snapshot"+dtf.format(now)+".png");
+
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            lblPrint.setText("Saved:\n"+file.getAbsolutePath());
+        } catch (IOException e) {
+            LOGGER.error("Unable to save screenshot image to {}", file.getAbsolutePath());
+            lblPrint.setText("Unable to save screenshot.");
+        }    
+
+        lblPrint.setOpacity(1);
+        FadeTransition fadeTransition  = new FadeTransition(Duration.seconds(3), lblPrint);
+        fadeTransition.setDelay(Duration.seconds(4));
+        fadeTransition.setFromValue(0.99);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.play();
     }
 
     /**

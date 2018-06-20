@@ -53,6 +53,11 @@ public class RpdLoginClient {
             errorMsg.setMessage("Login error: " + ex.getClass().getSimpleName() + " " + ex.getMessage());
             errorMsg.setAction(ExceptionUtils.getStackTrace(ex));
         }
+/*        try {
+            errorMsg = JsonUtils.getError();
+        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException ex) {
+            LOGGER.fatal(ExceptionUtils.getStackTrace(ex));
+        }*/
         return Optional.empty();
     }
 

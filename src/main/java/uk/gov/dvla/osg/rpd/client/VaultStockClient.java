@@ -34,15 +34,12 @@ public class VaultStockClient {
     public Optional<VaultStock> getStock(String token) {
         try {
             Response response = RpdRestClient.vaultStock(url, token);
-            LOGGER.debug(response.toString());
             String data = response.readEntity(String.class); 
-            LOGGER.debug(data);
             if (response.getStatus() == 200) {
                 return Optional.ofNullable(JsonUtils.loadStockFile(data));
             } else {
                 // RPD provides clear error information, and so is mapped to model
                 errorMessage = new xmlUtils().getXmlError(data);
-                //brm = new GsonBuilder().create().fromJson(data, BadResponseModel.class);
             }
         } catch (ProcessingException ex) {
             errorMessage.setMessage("Unable to connect to RPD web service. Connection timed out");

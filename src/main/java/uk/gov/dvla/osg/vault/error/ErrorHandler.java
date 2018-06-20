@@ -5,6 +5,7 @@ package uk.gov.dvla.osg.vault.error;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,15 +55,14 @@ public class ErrorHandler {
             DialogPane dialogPane = dialog.getDialogPane();
             dialogPane.getButtonTypes().add(ButtonType.OK);
             dialogPane.setHeaderText("Error Code:  " + errorCode);
-            dialogPane.setContentText("Message: " + errorMsg + "\n\nAction: " + errorAction);
+            dialogPane.setContentText("Message:\n" + errorMsg + "\n\nAction:\n" + errorAction);
             // display dialog and wait for a button to be clicked
             Optional<ButtonType> result = dialog.showAndWait();
             if (result.isPresent() && result.get() != ButtonType.OK) {
                 LOGGER.fatal("ErrorHandler: error closing dialog.");
             }
         } catch (Exception ex) {
-            // TODO Auto-generated catch block
-            ex.printStackTrace();
+            LOGGER.debug("Error with message dialog:\n{}", ExceptionUtils.getStackTrace(ex));
         }
     }
 }

@@ -21,32 +21,32 @@ public class RpdErrorResponse {
     public RpdErrorResponse() {}
     
     public String getName() {
-        return name;
+        return name != null ? name : "";
     }
 
     public String getCode() {
-        return code;
+        return code != null ? code : "";
     }
 
     public String getTime() {
-        return time;
+        return time != null ? time : "";
     }
 
     public String getSeverity() {
-        return severity;
+        return severity != null ? severity : "";
     }
 
     public String getMessage() {
-        return message;
+        return message != null ? message : "";
     }
 
     public String getAction() {
-        return action;
+        return action != null ? action : "";
     }
 
     @Override
     public String toString() {
-        return "Login Error [name=" + name + ", code=" + code + ", time=" + time + ", severity=" + severity + ", message=" + message + ", action=" + action + "]";
+        return "Login Error [name=" + getName() + ", code=" + getCode() + ", time=" + getTime() + ", severity=" + getSeverity() + ", message=" + getMessage() + ", action=" + getAction() + "]";
     }
 
     public void setName(String name) {

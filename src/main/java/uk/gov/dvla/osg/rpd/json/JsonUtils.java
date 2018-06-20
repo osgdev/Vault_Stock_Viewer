@@ -49,4 +49,10 @@ public class JsonUtils {
         Gson gsonBldr = new GsonBuilder().registerTypeAdapter(RpdErrorResponse.class, new RpdErrorTypeAdapter()).create();
         return gsonBldr.fromJson(data, RpdErrorResponse.class);
     }
+    
+    public static RpdErrorResponse getError() throws JsonIOException, JsonSyntaxException, FileNotFoundException {
+        Gson gsonBldr = new GsonBuilder().registerTypeAdapter(RpdErrorResponse.class, new RpdErrorTypeAdapter()).create();
+        FileReader fr = new FileReader("C:\\Users\\OSG\\Desktop\\BadResponse.json");
+        return gsonBldr.fromJson(fr, RpdErrorResponse.class);
+    }
 }

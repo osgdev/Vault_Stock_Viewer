@@ -22,7 +22,7 @@ public class PropertyLoader {
     
     public String getProperty(String key) throws RuntimeException {
         if (properties.containsKey(key)) {
-            return properties.getProperty(key).toUpperCase();
+            return properties.getProperty(key);
         }
         throw new RuntimeException("Unable to load property ["+key+"] from file.");
     }
