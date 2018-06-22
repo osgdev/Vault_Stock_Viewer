@@ -53,6 +53,14 @@
                         <Insets right="15.0" />
                      </HBox.margin>
                   </Label>
+                  <Button fx:id="btnExcel" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" mnemonicParsing="false" onAction="#save" text="EXCEL">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
                   <Button fx:id="btnPrint" contentDisplay="GRAPHIC_ONLY" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" mnemonicParsing="false" onAction="#print" text="RELOAD">
                      <opaqueInsets>
                         <Insets />

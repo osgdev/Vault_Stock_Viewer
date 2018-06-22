@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
+import javax.print.attribute.standard.OrientationRequested;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +43,7 @@ import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.enums.CardClass;
 import uk.gov.dvla.osg.vault.enums.Site;
+import uk.gov.dvla.osg.vault.enums.TableName;
 import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.login.LogOut;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
@@ -60,6 +64,10 @@ public class MainFormController {
     @FXML
     private Button btnPrint;
     @FXML
+    private Label lblExcel;
+    @FXML
+    private Button btnExcel;
+    @FXML
     private Label lblTime;
     @FXML
     private Button refreshBtn;
@@ -75,7 +83,7 @@ public class MainFormController {
     private GridPane gridInCrate;
     @FXML
     private GridPane gridFirstUci;
-    
+
     @FXML
     private Label lblMorriston_scs;
     @FXML
@@ -84,7 +92,7 @@ public class MainFormController {
     private Label lblMorriston_onCrate;
     @FXML
     private Label lblFforestfach_onCrate;
-    
+
     // TABLES - CARDS IN SCS
     @FXML
     private TableView<CardData> scs_mTachoTable;
@@ -264,7 +272,8 @@ public class MainFormController {
         // Add image to button
         setPrintButtonImage();
         setRefreshButtonImage();
-        assignRefreshBtnAction();        
+        setExcelButtonImage();
+        assignRefreshBtnAction();
         loadChoiceBoxes();
         setCellValueFactories();
         highlightTotals();
@@ -276,10 +285,15 @@ public class MainFormController {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/print.png"));
         btnPrint.setGraphic(new ImageView(buttonImage));
     }
-    
+
     private void setRefreshButtonImage() {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
         refreshBtn.setGraphic(new ImageView(buttonImage));
+    }
+
+    private void setExcelButtonImage() {
+        Image buttonImage = new Image(getClass().getResourceAsStream("/Images/excel.png"));
+        btnExcel.setGraphic(new ImageView(buttonImage));
     }
 
     private void checkSite() {
@@ -299,11 +313,11 @@ public class MainFormController {
             setupTableData_BothSites();
         }
     }
-    
+
     private VaultStock loadJsonData() {
         try {
             if (DEBUG_MODE) {
-                //String file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
+                // String file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
                 // String file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
                 String file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
                 return JsonUtils.loadStockFile(file);
@@ -322,9 +336,9 @@ public class MainFormController {
             }
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException ex) {
             LOGGER.fatal(ex.getMessage());
-            // Display error msg dialog box to user            
+            // Display error msg dialog box to user
             Platform.runLater(() -> {
-                    ErrorHandler.ErrorMsg("An error occured while connecting to the vault.", ex.getMessage());
+                ErrorHandler.ErrorMsg("An error occured while connecting to the vault.", ex.getMessage());
             });
         }
         return null;
@@ -358,7 +372,7 @@ public class MainFormController {
         PropertyValueFactory<CardData, String> propValCardVol = new PropertyValueFactory<>("volume");
         PropertyValueFactory<CardData, String> propValCardUci = new PropertyValueFactory<>("uci");
         // SCS - MORRISTON
-        scs_mTachoCol_Card.setCellValueFactory(propValCardType);        
+        scs_mTachoCol_Card.setCellValueFactory(propValCardType);
         scs_mTachoCol_Vol.setCellValueFactory(propValCardVol);
         scs_mBrpCol_Card.setCellValueFactory(propValCardType);
         scs_mBrpCol_Vol.setCellValueFactory(propValCardVol);
@@ -421,60 +435,60 @@ public class MainFormController {
         lblMorriston_onCrate.setText("MORRISTON");
         lblFforestfach_onCrate.setText("FFORESTFACH");
         gridInCrate.setRowSpan(lblMorriston_onCrate, 1);
-        
+
         setDataSCS_BothSites();
         setDataOnCrate_BothSites();
         setTestDataUCI();
     }
-    
+
     private void setDataSCS_BothSites() {
         scs_mTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.M));
-        gridOnShelf.setRowSpan(scs_mTachoTable , 1);
-        
+        gridOnShelf.setRowSpan(scs_mTachoTable, 1);
+
         scs_mBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.M));
-        gridOnShelf.setRowSpan(scs_mBrpTable , 1);
-        
+        gridOnShelf.setRowSpan(scs_mBrpTable, 1);
+
         scs_mPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.M));
-        gridOnShelf.setRowSpan(scs_mPolTable , 1);
-        
+        gridOnShelf.setRowSpan(scs_mPolTable, 1);
+
         scs_mDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.M));
-        gridOnShelf.setRowSpan(scs_mDqcTable , 1);
-        
+        gridOnShelf.setRowSpan(scs_mDqcTable, 1);
+
         scs_fTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.F));
         scs_fTachoTable.setVisible(true);
-        
+
         scs_fBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.F));
         scs_fBrpTable.setVisible(true);
-        
+
         scs_fPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.F));
         scs_fPolTable.setVisible(true);
-        
-        scs_fDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.F)); 
+
+        scs_fDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.F));
         scs_fDqcTable.setVisible(true);
     }
 
     private void setDataOnCrate_BothSites() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.M));
         gridInCrate.setRowSpan(onCrate_mTachoTable, 1);
-        
+
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.M));
         gridInCrate.setRowSpan(onCrate_mBrpTable, 1);
-        
+
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.M));
         gridInCrate.setRowSpan(onCrate_mPolTable, 1);
-        
+
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.M));
         gridInCrate.setRowSpan(onCrate_mDqcTable, 1);
-        
+
         onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.F));
         onCrate_fTachoTable.setVisible(true);
-        
+
         onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.F));
         onCrate_fBrpTable.setVisible(true);
-        
+
         onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.F));
         onCrate_fPolTable.setVisible(true);
-        
+
         onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.F));
         onCrate_fDqcTable.setVisible(true);
     }
@@ -498,50 +512,50 @@ public class MainFormController {
         lblMorriston_onCrate.setText("MORRISTON\n&\nFFORESTFACH");
         lblFforestfach_onCrate.setText("");
         gridInCrate.setRowSpan(lblMorriston_onCrate, 2);
-        
+
         setDataSCS_Combined();
         setDataOnCrate_Combined();
         setTestDataUCI();
     }
-    
+
     private void setDataSCS_Combined() {
         scs_mTachoTable.setItems(dataHandler.getScsDataForCombined(CardClass.TACHO));
         gridOnShelf.setRowSpan(scs_mTachoTable, 2);
-        
+
         scs_mBrpTable.setItems(dataHandler.getScsDataForCombined(CardClass.BID));
         gridOnShelf.setRowSpan(scs_mBrpTable, 2);
-        
+
         scs_mPolTable.setItems(dataHandler.getScsDataForCombined(CardClass.POL));
         gridOnShelf.setRowSpan(scs_mPolTable, 2);
-        
+
         scs_mDqcTable.setItems(dataHandler.getScsDataForCombined(CardClass.DQC));
         gridOnShelf.setRowSpan(scs_mDqcTable, 2);
-        
+
         scs_fTachoTable.setVisible(false);
         scs_fBrpTable.setVisible(false);
         scs_fPolTable.setVisible(false);
         scs_fDqcTable.setVisible(false);
     }
-    
+
     private void setDataOnCrate_Combined() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.TACHO));
         gridInCrate.setRowSpan(onCrate_mTachoTable, 2);
-        
+
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.BID));
         gridInCrate.setRowSpan(onCrate_mBrpTable, 2);
-        
+
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
         gridInCrate.setRowSpan(onCrate_mPolTable, 2);
-        
+
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
         gridInCrate.setRowSpan(onCrate_mDqcTable, 2);
-        
+
         onCrate_fTachoTable.setVisible(false);
         onCrate_fBrpTable.setVisible(false);
         onCrate_fPolTable.setVisible(false);
         onCrate_fDqcTable.setVisible(false);
     }
-    
+
     private void assignRefreshBtnAction() {
         AtomicInteger taskExecution = new AtomicInteger(0);
 
@@ -622,36 +636,100 @@ public class MainFormController {
     @FXML
     private void print() {
         WritableImage image;
-        
+
         if (tabOnShelf.isSelected()) {
-            image = gridOnShelf.snapshot(new SnapshotParameters(), null);    
+            image = gridOnShelf.snapshot(new SnapshotParameters(), null);
         } else if (tabInCrate.isSelected()) {
-            image = gridInCrate.snapshot(new SnapshotParameters(), null);  
+            image = gridInCrate.snapshot(new SnapshotParameters(), null);
         } else {
-            image = gridFirstUci.snapshot(new SnapshotParameters(), null);  
+            image = gridFirstUci.snapshot(new SnapshotParameters(), null);
         }
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("_ddMMyyyy_HHmmss");
         LocalDateTime now = LocalDateTime.now();
-        File file = new File("D:\\temp\\snapshot"+dtf.format(now)+".png");
-        
+        File file = new File("C:\\temp\\snapshot" + dtf.format(now) + ".png");
+
+        // Send image to file
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-            lblPrint.setText("Saved:\n"+file.getAbsolutePath());
         } catch (Exception ex) {
             LOGGER.error("Unable to save screenshot image to {}", file.getAbsolutePath());
             Platform.runLater(() -> {
                 lblPrint.setText("Unable to save screenshot.");
-                ErrorHandler.ErrorMsg("File Save Error", "An error occured while saving sreenshot to "+ file.getAbsolutePath(),"Please be patient while we fix the issue.");
+                ErrorHandler.ErrorMsg("File Save Error", "An error occured while saving sreenshot to " + file.getAbsolutePath(), "Please be patient while we fix the issue.");
             });
-        }    
+            return;
+        }
+        // Send image file to printer
+        try {
+            boolean printed = new PrintImage().sendToDefault(file.getAbsolutePath(), 1, OrientationRequested.LANDSCAPE);
+            if (printed) {
+                lblPrint.setText("Image sent to printer.");
+            } else {
+                lblPrint.setText("Printing was cancelled.\nPlease check your default printer.");
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Unable to print image.\n{}", ExceptionUtils.getStackTrace(ex));
+            Platform.runLater(() -> {
+                lblPrint.setText("Unable to print image.");
+                ErrorHandler.ErrorMsg("Print Error", "An error occured while sending image to printer.", "Please be patient while we fix the issue.");
+            });
+        }
 
+        // Delete image file
+        try {
+            file.delete();
+        } catch (Exception ex) {
+            LOGGER.error("Unable to delete image file.");
+            Platform.runLater(() -> {
+                lblPrint.setText("Unable to print image.");
+                ErrorHandler.ErrorMsg("File Delete Error", "The file " + file.getAbsolutePath() + " was not deleted.", "Please be patient while we fix the issue.");
+            });
+        }
+
+        displayMessage();
+    }
+
+    private void displayMessage() {
         lblPrint.setOpacity(1);
-        FadeTransition fadeTransition  = new FadeTransition(Duration.seconds(3), lblPrint);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(3), lblPrint);
         fadeTransition.setDelay(Duration.seconds(4));
         fadeTransition.setFromValue(0.99);
         fadeTransition.setToValue(0.0);
         fadeTransition.play();
+    }
+
+    @FXML
+    private void save() {
+        // BUILD DATA MAP
+        Map<TableName, List<CardData>> dataMap = new HashMap<>();
+        // IN VAULT
+        dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(scs_mTachoTable.getItems(), scs_fTachoTable.getItems()));
+        dataMap.put(TableName.INVAULT_BRP, ListUtils.union(scs_mBrpTable.getItems(), scs_fBrpTable.getItems()));
+        dataMap.put(TableName.INVAULT_POL, ListUtils.union(scs_mPolTable.getItems(), scs_fPolTable.getItems()));
+        dataMap.put(TableName.INVAULT_DQC, ListUtils.union(scs_mDqcTable.getItems(), scs_fDqcTable.getItems()));
+        
+        // IN CRATE
+        dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(onCrate_mTachoTable.getItems(), onCrate_fTachoTable.getItems()));    
+        dataMap.put(TableName.INCRATE_BRP, ListUtils.union(onCrate_mBrpTable.getItems(), onCrate_fBrpTable.getItems()));
+        dataMap.put(TableName.INCRATE_POL, ListUtils.union(onCrate_mPolTable.getItems(), onCrate_fPolTable.getItems()));
+        dataMap.put(TableName.INCRATE_DQC, ListUtils.union(onCrate_mDqcTable.getItems(), onCrate_fDqcTable.getItems()));
+        
+        // FIRST UCI
+        dataMap.put(TableName.UCI_TACHO, ListUtils.union(uci_mTachoTable.getItems(), uci_fTachoTable.getItems()));
+        dataMap.put(TableName.UCI_BRP, ListUtils.union(uci_mBrpTable.getItems(), uci_fBrpTable.getItems()));
+        dataMap.put(TableName.UCI_POL, ListUtils.union(uci_mPolTable.getItems(), uci_fPolTable.getItems()));
+        dataMap.put(TableName.UCI_DQC, ListUtils.union(onCrate_mPolTable.getItems(), onCrate_fPolTable.getItems()));
+        
+        // SAVE TO EXCEL SPREADSHEET
+        System.out.println("HERE!3");
+        Spreadsheet s = new Spreadsheet(dataMap);
+        System.out.println("HERE4!");
+        s.save();
+        System.out.println("HERE!5");
+        // Update label
+        lblPrint.setText("Saved as Excel spreadsheet!");
+        displayMessage();
     }
 
     /**

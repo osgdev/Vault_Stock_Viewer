@@ -69,7 +69,7 @@ public class DataHandler {
                 .forEachOrdered(card -> {   
                     
                     if (addedCards.add(card.getCardType())) {
-                        data = new CardData(card.getCardType(), card.getFirstUCI());
+                        data = new CardData(card.getCardType(), card.getFirstUCI(), card.getSite().name());
                     } else {
                         for (CardData cd : cardDataList) {
                             if (cd.getCardType().equals(card.getCardType())) {
@@ -92,9 +92,9 @@ public class DataHandler {
         if (cardDataList.size() > 0 && totalRequired) {
             int rowsToFill = TOTALROW - cardDataList.size();
                 for (int i = 0; i < rowsToFill; i++) {
-                    cardDataList.add(new CardData("", ""));
+                    cardDataList.add(new CardData());
                 } 
-            CardData total = new CardData("TOTAL", "");
+            CardData total = new CardData("TOTAL", "", "");
             total.increaseVolume(totalVolume.get());
             cardDataList.add(total);
         }

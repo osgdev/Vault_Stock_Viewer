@@ -3,9 +3,9 @@ package uk.gov.dvla.osg.rpd.client;
 import java.util.Optional;
 
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,27 +37,34 @@ public class RpdLoginClient {
                 String token = JsonUtils.getTokenFromJson(data);
             	return Optional.of(token);
             } else {
-            	// RPD provides clear error information, and so is mapped to model
-                errorMsg = JsonUtils.getError(data);
+                // If RPD url is incorrect or RPD is not available an HTML response is returned
+                MediaType mediaType = response.getMediaType();
+                if (mediaType.equals(MediaType.APPLICATION_JSON)) {                    
+                    // RPD provides clear error information, and so is mapped to model
+                    errorMsg = JsonUtils.getError(data);
+                } else {
+                    // Handle in the outer catch block.
+                    throw new IllegalArgumentException();
+                }
             }
         } catch (ProcessingException ex) {
+            errorMsg.setCode("Login Error: ");
 			errorMsg.setMessage("Unable to connect to RPD web service. Connection timed out");
 			errorMsg.setAction("Please wait a few minutes and then try again.");
         } catch (NullPointerException ex) {
+            errorMsg.setCode("Login Error: ");
             errorMsg.setMessage("Unable to connect to RPD web service. Invalid IP address for RPD");
             errorMsg.setAction("To resolve, check all parts of the login URL in the application config file.");
         } catch(IllegalArgumentException ex) {
+            errorMsg.setCode("Login Error: ");
             errorMsg.setMessage("Invalid URL in config file [" + url + "]. Please check configuration.");
             errorMsg.setAction("To resolve, check all parts of the login URL in the application config file. This problem is usually caused by either a missing value in the URL or an illegal character.");
         } catch (Exception ex) {
-            errorMsg.setMessage("Login error: " + ex.getClass().getSimpleName() + " " + ex.getMessage());
-            errorMsg.setAction(ExceptionUtils.getStackTrace(ex));
+            errorMsg.setCode("Login Error: ");
+            errorMsg.setMessage("An unknown error occured while attempting to login to RPD");
+            errorMsg.setAction("Please notify Dev Team.");
+            errorMsg.setException(ex);
         }
-/*        try {
-            errorMsg = JsonUtils.getError();
-        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException ex) {
-            LOGGER.fatal(ExceptionUtils.getStackTrace(ex));
-        }*/
         return Optional.empty();
     }
 
