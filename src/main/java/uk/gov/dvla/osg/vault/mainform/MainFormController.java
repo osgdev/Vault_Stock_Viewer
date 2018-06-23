@@ -2,6 +2,7 @@ package uk.gov.dvla.osg.vault.mainform;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -697,6 +698,8 @@ public class MainFormController {
         fadeTransition.setFromValue(0.99);
         fadeTransition.setToValue(0.0);
         fadeTransition.play();
+        // Move focus to read only control to remove the focus highlight from button
+        lblTime.requestFocus();
     }
 
     @FXML
@@ -704,31 +707,85 @@ public class MainFormController {
         // BUILD DATA MAP
         Map<TableName, List<CardData>> dataMap = new HashMap<>();
         // IN VAULT
-        dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(scs_mTachoTable.getItems(), scs_fTachoTable.getItems()));
-        dataMap.put(TableName.INVAULT_BRP, ListUtils.union(scs_mBrpTable.getItems(), scs_fBrpTable.getItems()));
-        dataMap.put(TableName.INVAULT_POL, ListUtils.union(scs_mPolTable.getItems(), scs_fPolTable.getItems()));
-        dataMap.put(TableName.INVAULT_DQC, ListUtils.union(scs_mDqcTable.getItems(), scs_fDqcTable.getItems()));
+        dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(
+                ListUtils.selectRejected(scs_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(scs_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.INVAULT_BRP, ListUtils.union(
+                ListUtils.selectRejected(scs_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(scs_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.INVAULT_POL, ListUtils.union(
+                ListUtils.selectRejected(scs_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(scs_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.INVAULT_DQC, ListUtils.union(
+                ListUtils.selectRejected(scs_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(scs_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
         
         // IN CRATE
-        dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(onCrate_mTachoTable.getItems(), onCrate_fTachoTable.getItems()));    
-        dataMap.put(TableName.INCRATE_BRP, ListUtils.union(onCrate_mBrpTable.getItems(), onCrate_fBrpTable.getItems()));
-        dataMap.put(TableName.INCRATE_POL, ListUtils.union(onCrate_mPolTable.getItems(), onCrate_fPolTable.getItems()));
-        dataMap.put(TableName.INCRATE_DQC, ListUtils.union(onCrate_mDqcTable.getItems(), onCrate_fDqcTable.getItems()));
+        dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(
+                ListUtils.selectRejected(onCrate_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(onCrate_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));    
+        
+        dataMap.put(TableName.INCRATE_BRP, ListUtils.union(
+                ListUtils.selectRejected(onCrate_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(onCrate_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.INCRATE_POL, ListUtils.union(
+                ListUtils.selectRejected(onCrate_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(onCrate_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.INCRATE_DQC, ListUtils.union(
+                ListUtils.selectRejected(onCrate_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(onCrate_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
         
         // FIRST UCI
-        dataMap.put(TableName.UCI_TACHO, ListUtils.union(uci_mTachoTable.getItems(), uci_fTachoTable.getItems()));
-        dataMap.put(TableName.UCI_BRP, ListUtils.union(uci_mBrpTable.getItems(), uci_fBrpTable.getItems()));
-        dataMap.put(TableName.UCI_POL, ListUtils.union(uci_mPolTable.getItems(), uci_fPolTable.getItems()));
-        dataMap.put(TableName.UCI_DQC, ListUtils.union(onCrate_mPolTable.getItems(), onCrate_fPolTable.getItems()));
+        dataMap.put(TableName.UCI_TACHO, ListUtils.union(
+                ListUtils.selectRejected(uci_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(uci_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.UCI_BRP, ListUtils.union(
+                ListUtils.selectRejected(uci_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(uci_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.UCI_POL, ListUtils.union(
+                ListUtils.selectRejected(uci_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(uci_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
+        
+        dataMap.put(TableName.UCI_DQC, ListUtils.union(
+                ListUtils.selectRejected(uci_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
+                ListUtils.selectRejected(uci_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ));
         
         // SAVE TO EXCEL SPREADSHEET
-        System.out.println("HERE!3");
         Spreadsheet s = new Spreadsheet(dataMap);
-        System.out.println("HERE4!");
-        s.save();
-        System.out.println("HERE!5");
-        // Update label
-        lblPrint.setText("Saved as Excel spreadsheet!");
+        try {
+            s.save();
+            lblPrint.setText("Saved as Excel spreadsheet!");
+        } catch (IOException ex) {
+            LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
+            lblPrint.setText("Unable to save spreadsheet.");
+            Platform.runLater(() -> {
+                if (ex.getMessage().contains("being used by another process")) {
+                    ErrorHandler.ErrorMsg("File Save Error", "The file is currently open in Excel.", "Close the open file and try again.");
+                } else {
+                    ErrorHandler.ErrorMsg("File Save Error", "Unable to save the spreadsheet.", "Check you have permission to save to this directory.");
+                }
+            });
+        }
+        // Update label 
         displayMessage();
     }
 
