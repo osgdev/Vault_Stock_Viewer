@@ -784,6 +784,9 @@ public class MainFormController {
                     ErrorHandler.ErrorMsg("File Save Error", "Unable to save the spreadsheet.", "Check you have permission to save to this directory.");
                 }
             });
+        } catch (RuntimeException ex) {
+            LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
+            lblPrint.setText("No data to save.");
         }
         // Update label 
         displayMessage();

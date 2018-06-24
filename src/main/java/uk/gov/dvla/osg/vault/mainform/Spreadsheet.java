@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 
 import uk.gov.dvla.osg.vault.data.CardData;
@@ -21,6 +22,13 @@ public class Spreadsheet {
     private static final XSSFColor DARK_BLUE = new XSSFColor(new java.awt.Color(68, 114, 196));
     private static final XSSFColor WHITE = new XSSFColor(new java.awt.Color(255, 255, 255));
     private static final XSSFColor BORDER_COLOR = new XSSFColor(new java.awt.Color(143, 170, 220));
+    
+    private XSSFCellStyle style_even;
+    private XSSFCellStyle style_odd;
+    private XSSFCellStyle style_header;
+    private XSSFCellStyle style_even_centre;
+    private XSSFCellStyle style_odd_centre;
+    private XSSFCellStyle style_header_centre;
     
     private final Map<TableName, List<CardData>> dataMap;
 
@@ -38,51 +46,44 @@ public class Spreadsheet {
      * Saves the workbook to the desktop.
      * @throws IOException 
      */
-    void save() throws IOException {
+    void save() throws IOException, RuntimeException {
         // Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFCellStyle[] style = cellStyle(workbook);
+        createWorkbookStyles(workbook);
 
         // InVault sheet
         XSSFSheet sheet_IVB = workbook.createSheet("In Vault");
         createRows(sheet_IVB);
-        addData(TableName.INVAULT_TACHO, sheet_IVB, style, 0);
-        addData(TableName.INVAULT_BRP, sheet_IVB, style, 4);
-        addData(TableName.INVAULT_POL, sheet_IVB, style, 8);
-        addData(TableName.INVAULT_DQC, sheet_IVB, style, 12);
-        addTotalRow(sheet_IVB, style);
+        addData(TableName.INVAULT_TACHO, sheet_IVB, 0);
+        addData(TableName.INVAULT_BRP, sheet_IVB, 4);
+        addData(TableName.INVAULT_POL, sheet_IVB, 8);
+        addData(TableName.INVAULT_DQC, sheet_IVB, 12);
+        addTotalRow(sheet_IVB);
         setColumnWidths(sheet_IVB);
 
         // InCrate sheet
         XSSFSheet sheet_ICB = workbook.createSheet("In Crate");
         createRows(sheet_ICB);
-        addData(TableName.INCRATE_TACHO, sheet_ICB, style, 0);
-        addData(TableName.INCRATE_BRP, sheet_ICB, style, 4);
-        addData(TableName.INCRATE_POL, sheet_ICB, style, 8);
-        addData(TableName.INCRATE_DQC, sheet_ICB, style, 12);
-        addTotalRow(sheet_ICB, style);
+        addData(TableName.INCRATE_TACHO, sheet_ICB, 0);
+        addData(TableName.INCRATE_BRP, sheet_ICB, 4);
+        addData(TableName.INCRATE_POL, sheet_ICB, 8);
+        addData(TableName.INCRATE_DQC, sheet_ICB, 12);
+        addTotalRow(sheet_ICB);
         setColumnWidths(sheet_ICB);
 
         // First UCI sheet
         XSSFSheet sheet_UCI = workbook.createSheet("UCI's");
         createRows(sheet_UCI);
-        addData(TableName.UCI_TACHO, sheet_UCI, style, 0);
-        addData(TableName.UCI_BRP, sheet_UCI, style, 4);
-        addData(TableName.UCI_POL, sheet_UCI, style, 8);
-        addData(TableName.UCI_DQC, sheet_UCI, style, 12);
+        addData(TableName.UCI_TACHO, sheet_UCI, 0);
+        addData(TableName.UCI_BRP, sheet_UCI, 4);
+        addData(TableName.UCI_POL, sheet_UCI, 8);
+        addData(TableName.UCI_DQC, sheet_UCI, 12);
         setColumnWidths(sheet_UCI);
 
         setPrintArea(workbook);
 
         // Write the workbook in file system
-        try (FileOutputStream out = new FileOutputStream(new File("cardManagement.xlsx"))) {
-            workbook.write(out);
-            workbook.close();
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (IOException ex) {
-            throw ex;
-        }
+        saveWorkbook(workbook);
     }
 
     /**
@@ -101,26 +102,28 @@ public class Spreadsheet {
      * @param style A collection of styles to be applied to cells.
      * @param colStart The starting column into which the table will be inserted.
      */
-    private void addData(TableName tableName, XSSFSheet sheet, XSSFCellStyle[] style, int colStart) {
+    private void addData(TableName tableName, XSSFSheet sheet, int colStart) throws RuntimeException {
 
         Iterator<CardData> data = dataMap.get(tableName).iterator();
 
         sheet.rowIterator().forEachRemaining( r -> {
 
+            // Iterator returns Row, convert to XSSFRow to apply styles
             XSSFRow row = (XSSFRow) r;
-            
-            XSSFCellStyle cellStyle = style[row.getRowNum() % 2];
+            // Switch between odd and even rows
+            XSSFCellStyle cellStyle = row.getRowNum() % 2 == 0 ? style_even : style_odd;
+            XSSFCellStyle siteStyle = row.getRowNum() % 2 == 0 ? style_even_centre : style_odd_centre;
             
             // Header Row
             if (row.getRowNum() == 0) {
                 XSSFCell cell = row.createCell(colStart);
                 cell.setCellValue(tableName.getColumnName());
-                cell.setCellStyle(style[2]);
+                cell.setCellStyle(style_header);
 
                 cell = row.createCell(colStart + 1);
                 cell.setCellValue("SITE");
-                cell.setCellStyle(style[2]);
-
+                cell.setCellStyle(style_header_centre);
+                
                 if (tableName.name().startsWith("UCI")) {
                     cell = row.createCell(colStart + 2);
                     cell.setCellValue("UCI");
@@ -128,12 +131,12 @@ public class Spreadsheet {
                     cell = row.createCell(colStart + 2);
                     cell.setCellValue("VOLUME");
                 }
-                cell.setCellStyle(style[2]);
+                cell.setCellStyle(style_header);
                 // Data on all but final row (Total row)
             } else if (row.getRowNum() < sheet.getLastRowNum()) {
                 if (data.hasNext()) {
                     CardData card = data.next();
-
+                    
                     if (card.getVolumeInt() > 0) {
                         XSSFCell cell = row.createCell(colStart);
                         cell.setCellValue(card.getCardType());
@@ -141,7 +144,7 @@ public class Spreadsheet {
 
                         cell = row.createCell(colStart + 1);
                         cell.setCellValue(card.getSite());
-                        cell.setCellStyle(cellStyle);
+                        cell.setCellStyle(siteStyle);
         
                         if (tableName.name().startsWith("UCI")) {
                             cell = row.createCell(colStart + 2);
@@ -152,14 +155,16 @@ public class Spreadsheet {
                             cell.setCellValue(card.getVolumeInt());
                             cell.setCellStyle(cellStyle);
                         }
+                    } else {
+                        XSSFCell cell = row.createCell(colStart);
+                        cell.setCellStyle(cellStyle);
+                        cell = row.createCell(colStart + 1);
+                        cell.setCellStyle(siteStyle);
+                        cell = row.createCell(colStart + 2);
+                        cell.setCellStyle(cellStyle);
                     }
                 } else {
-                    XSSFCell cell = row.createCell(colStart);
-                    cell.setCellStyle(cellStyle);
-                    cell = row.createCell(colStart + 1);
-                    cell.setCellStyle(cellStyle);
-                    cell = row.createCell(colStart + 2);
-                    cell.setCellStyle(cellStyle);
+                    throw new RuntimeException("No data to process!");
                 }
             }
         });
@@ -172,12 +177,12 @@ public class Spreadsheet {
      * @param sheet The sheet to receive a Total Row
      * @param style The applied style will depend on whether the row is odd or even.
      */
-    private void addTotalRow(XSSFSheet sheet, XSSFCellStyle[] style) {
+    private void addTotalRow(XSSFSheet sheet) {
         // Add total row
         int last = sheet.getLastRowNum();
         XSSFRow totalRow = sheet.getRow(last);
-        XSSFCellStyle cellStyle = style[totalRow.getRowNum() % 2];
-
+        XSSFCellStyle cellStyle = totalRow.getRowNum() % 2 == 0 ? style_even : style_odd;
+        
         XSSFCell cell = totalRow.createCell(0);
         cell.setCellValue("TOTAL");
         cell.setCellStyle(cellStyle);
@@ -246,13 +251,10 @@ public class Spreadsheet {
     }
 
     /**
-     * Creates an array of styles, where the 0 index is applied to even
-     * rows, the 1 index is applied to odd rows and index 3 is the 
-     * style for the header row.
+     * Creates different styles to be applied to cells within the workbook.
      * @param workbook The workbook in which the styles will be applied.
      */
-    private XSSFCellStyle[] cellStyle(XSSFWorkbook workbook) {
-        XSSFCellStyle[] style = new XSSFCellStyle[3];
+    private void createWorkbookStyles(XSSFWorkbook workbook) {
         
         // Base common to all three styles
         XSSFCellStyle baseStyle = workbook.createCellStyle();
@@ -268,27 +270,52 @@ public class Spreadsheet {
         baseStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         
         // EVEN ROW
-        XSSFCellStyle s = workbook.createCellStyle();
-        s.cloneStyleFrom(baseStyle);
-        s.setFillForegroundColor(LIGHT_BLUE);
-        style[0] = s;
+        style_even = workbook.createCellStyle();
+        style_even.cloneStyleFrom(baseStyle);
+        style_even.setFillForegroundColor(LIGHT_BLUE);
+
+        style_even_centre = workbook.createCellStyle();
+        style_even_centre.cloneStyleFrom(style_even);
+        style_even_centre.setAlignment(HorizontalAlignment.CENTER);
         
         // ODD ROw
-        s = workbook.createCellStyle();
-        s.cloneStyleFrom(baseStyle);
-        s.setFillForegroundColor(WHITE);
-        style[1] = s;
+        style_odd = workbook.createCellStyle();
+        style_odd.cloneStyleFrom(baseStyle);
+        style_odd.setFillForegroundColor(WHITE);
+        
+        style_odd_centre = workbook.createCellStyle();
+        style_odd_centre.cloneStyleFrom(style_odd);
+        style_odd_centre.setAlignment(HorizontalAlignment.CENTER);
         
         // HEADER ROW
-        s = workbook.createCellStyle();
-        s.cloneStyleFrom(baseStyle);
+        style_header = workbook.createCellStyle();
+        style_header.cloneStyleFrom(baseStyle);
         XSSFFont font = workbook.createFont();
         font.setColor(WHITE);
         font.setBold(true);
-        s.setFont(font);
-        s.setFillForegroundColor(DARK_BLUE);
-        style[2] = s;
-        
-        return style;
+        style_header.setFont(font);
+        style_header.setFillForegroundColor(DARK_BLUE);
+
+        // HEADER ROW
+        style_header_centre = workbook.createCellStyle();
+        style_header_centre.cloneStyleFrom(style_header);
+        style_header_centre.setAlignment(HorizontalAlignment.CENTER);
+    }
+    
+    /**
+     * Save the workbook to the file system.
+     * @param workbook The workbook to save.
+     * @throws FileNotFoundException if Workbook is currently open.
+     * @throws IOException if unable to save Workbook to file system.
+     */
+    private void saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException {
+        try (FileOutputStream out = new FileOutputStream(new File("cardManagement.xlsx"))) {
+            workbook.write(out);
+            workbook.close();
+        } catch (FileNotFoundException e) {
+            throw e;
+        } catch (IOException ex) {
+            throw ex;
+        }
     }
 }
