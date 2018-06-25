@@ -39,11 +39,12 @@ public class RpdLoginClient {
             } else {
                 // If RPD url is incorrect or RPD is not available an HTML response is returned
                 MediaType mediaType = response.getMediaType();
-                if (mediaType.equals(MediaType.APPLICATION_JSON)) {                    
+                if (mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
                     // RPD provides clear error information, and so is mapped to model
                     errorMsg = JsonUtils.getError(data);
                 } else {
                     // Handle in the outer catch block.
+                    LOGGER.warn("Response is not JSON!");
                     throw new IllegalArgumentException();
                 }
             }

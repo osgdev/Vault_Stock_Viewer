@@ -107,7 +107,7 @@ public class LoginController {
 						} catch (IOException e) {
 							Platform.runLater(() -> {
 							    LOGGER.fatal(ExceptionUtils.getStackTrace(e));
-							    ErrorHandler.ErrorMsg("N/A", "We've no idea what just happened.","Best bet is to call Greg!");
+							    ErrorHandler.ErrorMsg("Login Error", "We've no idea what just happened.","Best bet is to call Greg!");
 							});
 						}
 					});

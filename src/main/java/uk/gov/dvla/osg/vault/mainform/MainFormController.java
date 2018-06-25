@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.print.attribute.standard.OrientationRequested;
 
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -706,67 +707,70 @@ public class MainFormController {
     private void save() {
         // BUILD DATA MAP
         Map<TableName, List<CardData>> dataMap = new HashMap<>();
+        
+        Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
+        
         // IN VAULT
         dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(
-                ListUtils.selectRejected(scs_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(scs_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(scs_mTachoTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(scs_fTachoTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.INVAULT_BRP, ListUtils.union(
-                ListUtils.selectRejected(scs_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(scs_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(scs_mBrpTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(scs_fBrpTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.INVAULT_POL, ListUtils.union(
-                ListUtils.selectRejected(scs_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(scs_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(scs_mPolTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(scs_fPolTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.INVAULT_DQC, ListUtils.union(
-                ListUtils.selectRejected(scs_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(scs_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(scs_mDqcTable.getItems(), fieldsToIgnore),
+                ListUtils.selectRejected(scs_fDqcTable.getItems(), fieldsToIgnore)
                 ));
         
         // IN CRATE
         dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(onCrate_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(onCrate_mTachoTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(onCrate_fTachoTable.getItems(), fieldsToIgnore)
                 ));    
         
         dataMap.put(TableName.INCRATE_BRP, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(onCrate_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(onCrate_mBrpTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(onCrate_fBrpTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.INCRATE_POL, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(onCrate_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(onCrate_mPolTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(onCrate_fPolTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.INCRATE_DQC, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(onCrate_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(onCrate_mDqcTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(onCrate_fDqcTable.getItems(), fieldsToIgnore)
                 ));
         
         // FIRST UCI
         dataMap.put(TableName.UCI_TACHO, ListUtils.union(
-                ListUtils.selectRejected(uci_mTachoTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(uci_fTachoTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(uci_mTachoTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(uci_fTachoTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.UCI_BRP, ListUtils.union(
-                ListUtils.selectRejected(uci_mBrpTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(uci_fBrpTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(uci_mBrpTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(uci_fBrpTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.UCI_POL, ListUtils.union(
-                ListUtils.selectRejected(uci_mPolTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(uci_fPolTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(uci_mPolTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(uci_fPolTable.getItems(), fieldsToIgnore)
                 ));
         
         dataMap.put(TableName.UCI_DQC, ListUtils.union(
-                ListUtils.selectRejected(uci_mDqcTable.getItems(), c -> c.cardType.equals("TOTAL")), 
-                ListUtils.selectRejected(uci_fDqcTable.getItems(), c -> c.cardType.equals("TOTAL"))
+                ListUtils.selectRejected(uci_mDqcTable.getItems(), fieldsToIgnore), 
+                ListUtils.selectRejected(uci_fDqcTable.getItems(), fieldsToIgnore)
                 ));
         
         // SAVE TO EXCEL SPREADSHEET

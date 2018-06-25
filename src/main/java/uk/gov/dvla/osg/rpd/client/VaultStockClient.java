@@ -40,7 +40,7 @@ public class VaultStockClient {
             } else {
                 // If RPD an RPD error response is recieved it will be retrieved as XML from the Vault
                 MediaType mediaType = response.getMediaType();
-                if (mediaType.equals(MediaType.TEXT_XML)) {
+                if (mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
                     // RPD provides clear error information, and so is mapped to model
                     errorMessage = new xmlUtils().getXmlError(data);
                 } else {
