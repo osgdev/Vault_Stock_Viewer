@@ -1,9 +1,7 @@
 package uk.gov.dvla.osg.vault.mainform;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -13,6 +11,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 
 import uk.gov.dvla.osg.vault.data.CardData;
+import uk.gov.dvla.osg.vault.enums.Style;
 import uk.gov.dvla.osg.vault.enums.TableName;
 
 public class Spreadsheet {
@@ -23,23 +22,9 @@ public class Spreadsheet {
     private static final XSSFColor DARK_BLUE = new XSSFColor(new java.awt.Color(68, 114, 196));
     private static final XSSFColor WHITE = new XSSFColor(new java.awt.Color(255, 255, 255));
     private static final XSSFColor BORDER_COLOR = new XSSFColor(new java.awt.Color(143, 170, 220));
-
-    private XSSFCellStyle style_even_type;
-    private XSSFCellStyle style_even_site;
-    private XSSFCellStyle style_even_vol;
-    private XSSFCellStyle style_even_total_type;
-    private XSSFCellStyle style_even_total_site;
-    private XSSFCellStyle style_even_total_vol;
-    private XSSFCellStyle style_odd_type;
-    private XSSFCellStyle style_odd_site;
-    private XSSFCellStyle style_odd_vol;
-    private XSSFCellStyle style_odd_total_type;
-    private XSSFCellStyle style_odd_total_site;
-    private XSSFCellStyle style_odd_total_vol;
-    private XSSFCellStyle style_header;
-    private XSSFCellStyle style_header_centre;
-    private XSSFCellStyle style_header_vol;
-
+    // Collection of styles to be used
+    private Map<Style, XSSFCellStyle> styles = new HashMap<>();
+    // Lookup table from a TableName enum
     private final Map<TableName, List<CardData>> dataMap;
 
     /**
@@ -123,28 +108,28 @@ public class Spreadsheet {
             // Iterator returns Row, convert to XSSFRow to apply styles
             XSSFRow row = (XSSFRow) r;
             // Switch between odd and even rows
-            XSSFCellStyle cellStyle = row.getRowNum() % 2 == 0 ? style_even_type : style_odd_type;
-            XSSFCellStyle siteStyle = row.getRowNum() % 2 == 0 ? style_even_site : style_odd_site;
-            XSSFCellStyle volStyle = row.getRowNum() % 2 == 0 ? style_even_vol : style_odd_vol;
+            XSSFCellStyle cellStyle = row.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_ROW_TYPE) : styles.get(Style.ODD_ROW_TYPE);
+            XSSFCellStyle siteStyle = row.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_ROW_SITE) : styles.get(Style.ODD_ROW_SITE);
+            XSSFCellStyle volStyle = row.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_ROW_VOL) : styles.get(Style.ODD_ROW_VOL);
 
             // Header Row
             if (row.getRowNum() == 0) {
                 XSSFCell cell = row.createCell(colStart);
                 cell.setCellValue(tableName.getColumnName());
-                cell.setCellStyle(style_header);
+                cell.setCellStyle(styles.get(Style.HEADER_ROW_TYPE));
 
                 cell = row.createCell(colStart + 1);
                 cell.setCellValue("SITE");
-                cell.setCellStyle(style_header_centre);
+                cell.setCellStyle(styles.get(Style.HEADER_ROW_SITE));
 
                 if (tableName.name().startsWith("UCI")) {
                     cell = row.createCell(colStart + 2);
                     cell.setCellValue("UCI");
-                    cell.setCellStyle(style_header);
+                    cell.setCellStyle(styles.get(Style.HEADER_ROW_TYPE));
                 } else {
                     cell = row.createCell(colStart + 2);
                     cell.setCellValue("VOLUME");
-                    cell.setCellStyle(style_header_vol);
+                    cell.setCellStyle(styles.get(Style.HEADER_ROW_VOL));
                 }
                 // Data on all but final row (Total row)
             } else if (row.getRowNum() < sheet.getLastRowNum()) {
@@ -192,9 +177,9 @@ public class Spreadsheet {
         // Add total row
         int last = sheet.getLastRowNum();
         XSSFRow totalRow = sheet.getRow(last);
-        XSSFCellStyle typeStyle = totalRow.getRowNum() % 2 == 0 ? style_even_total_type : style_odd_total_type;
-        XSSFCellStyle siteStyle = totalRow.getRowNum() % 2 == 0 ? style_even_total_type : style_odd_total_type;
-        XSSFCellStyle volStyle = totalRow.getRowNum() % 2 == 0 ? style_even_total_vol : style_odd_total_vol;
+        XSSFCellStyle typeStyle = totalRow.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_TOTAL_TYPE) : styles.get(Style.ODD_TOTAL_TYPE);
+        XSSFCellStyle siteStyle = totalRow.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_TOTAL_SITE) : styles.get(Style.ODD_TOTAL_SITE);
+        XSSFCellStyle volStyle = totalRow.getRowNum() % 2 == 0 ? styles.get(Style.EVEN_TOTAL_VOL) : styles.get(Style.ODD_TOTAL_VOL);
 
         XSSFCell cell = totalRow.createCell(0);
         cell.setCellValue("TOTAL");
@@ -289,71 +274,86 @@ public class Spreadsheet {
         baseStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         // EVEN ROW
-        style_even_type = workbook.createCellStyle();
-        style_even_type.cloneStyleFrom(baseStyle);
-        style_even_type.setFillForegroundColor(LIGHT_BLUE);
-
-        style_even_site = workbook.createCellStyle();
-        style_even_site.cloneStyleFrom(style_even_type);
-        style_even_site.setAlignment(HorizontalAlignment.CENTER);
-
-        style_even_vol = workbook.createCellStyle();
-        style_even_vol.cloneStyleFrom(style_even_type);
-        style_even_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
+        XSSFCellStyle even_row_type = workbook.createCellStyle();
+        even_row_type.cloneStyleFrom(baseStyle);
+        even_row_type.setFillForegroundColor(LIGHT_BLUE);
+        styles.put(Style.EVEN_ROW_TYPE, even_row_type);
         
-        style_even_total_type = workbook.createCellStyle();
-        style_even_total_type.cloneStyleFrom(style_even_type);
-        style_even_total_type.setFont(bold);
+        XSSFCellStyle even_row_site = workbook.createCellStyle();
+        even_row_site.cloneStyleFrom(even_row_type);
+        even_row_site.setAlignment(HorizontalAlignment.CENTER);
+        styles.put(Style.EVEN_ROW_SITE, even_row_site);
         
-        style_even_total_site = workbook.createCellStyle();
-        style_even_total_site.cloneStyleFrom(style_even_site);
-        style_even_total_site.setFont(bold);
+        XSSFCellStyle even_row_vol = workbook.createCellStyle();
+        even_row_vol.cloneStyleFrom(even_row_type);
+        even_row_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
+        styles.put(Style.EVEN_ROW_VOL, even_row_vol);
         
-        style_even_total_vol = workbook.createCellStyle();
-        style_even_total_vol.cloneStyleFrom(style_even_vol);
-        style_even_total_vol.setFont(bold);
+        XSSFCellStyle even_total_type = workbook.createCellStyle();
+        even_total_type.cloneStyleFrom(even_row_type);
+        even_total_type.setFont(bold);
+        styles.put(Style.EVEN_TOTAL_TYPE, even_total_type);
+        
+        XSSFCellStyle even_total_site = workbook.createCellStyle();
+        even_total_site.cloneStyleFrom(even_row_site);
+        even_total_site.setFont(bold);
+        styles.put(Style.EVEN_TOTAL_SITE, even_total_site);
+        
+        XSSFCellStyle even_total_vol = workbook.createCellStyle();
+        even_total_vol.cloneStyleFrom(even_row_vol);
+        even_total_vol.setFont(bold);
+        styles.put(Style.EVEN_TOTAL_VOL, even_total_vol);
         
         // ODD ROW
-        style_odd_type = workbook.createCellStyle();
-        style_odd_type.cloneStyleFrom(baseStyle);
-        style_odd_type.setFillForegroundColor(WHITE);
-
-        style_odd_site = workbook.createCellStyle();
-        style_odd_site.cloneStyleFrom(style_odd_type);
-        style_odd_site.setAlignment(HorizontalAlignment.CENTER);
-
-        style_odd_vol = workbook.createCellStyle();
-        style_odd_vol.cloneStyleFrom(style_odd_type);
-        style_odd_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
-
-        style_odd_total_type = workbook.createCellStyle();
-        style_odd_total_type.cloneStyleFrom(style_odd_type);
-        style_odd_total_type.setFont(bold);
+        XSSFCellStyle odd_row_type = workbook.createCellStyle();
+        odd_row_type.cloneStyleFrom(baseStyle);
+        odd_row_type.setFillForegroundColor(WHITE);
+        styles.put(Style.ODD_ROW_TYPE, odd_row_type);
         
-        style_odd_total_site = workbook.createCellStyle();
-        style_odd_total_site.cloneStyleFrom(style_odd_site);
-        style_odd_total_site.setFont(bold);
+        XSSFCellStyle odd_row_site = workbook.createCellStyle();
+        odd_row_site.cloneStyleFrom(odd_row_type);
+        odd_row_site.setAlignment(HorizontalAlignment.CENTER);
+        styles.put(Style.ODD_ROW_SITE, odd_row_site);
         
-        style_odd_total_vol = workbook.createCellStyle();
-        style_odd_total_vol.cloneStyleFrom(style_odd_vol);
-        style_odd_total_vol.setFont(bold);
+        XSSFCellStyle odd_row_vol = workbook.createCellStyle();
+        odd_row_vol.cloneStyleFrom(odd_row_type);
+        odd_row_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
+        styles.put(Style.ODD_ROW_VOL, odd_row_vol);
+
+        XSSFCellStyle odd_total_type = workbook.createCellStyle();
+        odd_total_type.cloneStyleFrom(odd_row_type);
+        odd_total_type.setFont(bold);
+        styles.put(Style.ODD_TOTAL_TYPE, odd_total_type);
+        
+        XSSFCellStyle odd_total_site = workbook.createCellStyle();
+        odd_total_site.cloneStyleFrom(odd_row_site);
+        odd_total_site.setFont(bold);
+        styles.put(Style.ODD_TOTAL_SITE, odd_total_site);
+        
+        XSSFCellStyle odd_total_vol = workbook.createCellStyle();
+        odd_total_vol.cloneStyleFrom(odd_row_vol);
+        odd_total_vol.setFont(bold);
+        styles.put(Style.ODD_TOTAL_VOL, odd_total_vol);
         
         // HEADER ROW
         XSSFFont font = workbook.createFont();
         font.setColor(WHITE);
         font.setBold(true);
-        style_header = workbook.createCellStyle();
-        style_header.cloneStyleFrom(baseStyle);
-        style_header.setFont(font);
-        style_header.setFillForegroundColor(DARK_BLUE);
+        XSSFCellStyle header_row_type = workbook.createCellStyle();
+        header_row_type.cloneStyleFrom(baseStyle);
+        header_row_type.setFont(font);
+        header_row_type.setFillForegroundColor(DARK_BLUE);
+        styles.put(Style.HEADER_ROW_TYPE, header_row_type);
 
-        style_header_centre = workbook.createCellStyle();
-        style_header_centre.cloneStyleFrom(style_header);
-        style_header_centre.setAlignment(HorizontalAlignment.CENTER);
+        XSSFCellStyle header_row_site = workbook.createCellStyle();
+        header_row_site.cloneStyleFrom(header_row_type);
+        header_row_site.setAlignment(HorizontalAlignment.CENTER);
+        styles.put(Style.HEADER_ROW_SITE, header_row_site);
         
-        style_header_vol = workbook.createCellStyle();
-        style_header_vol.cloneStyleFrom(style_header);
-        style_header_vol.setAlignment(HorizontalAlignment.RIGHT);
+        XSSFCellStyle header_row_vol = workbook.createCellStyle();
+        header_row_vol.cloneStyleFrom(header_row_type);
+        header_row_vol.setAlignment(HorizontalAlignment.RIGHT);
+        styles.put(Style.HEADER_ROW_VOL, header_row_vol);
     }
 
     /**
