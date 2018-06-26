@@ -705,6 +705,11 @@ public class MainFormController {
 
     @FXML
     private void save() {
+        lblPrint.setText("Please wait...");
+        
+        new Thread( () -> {
+            
+        
         // BUILD DATA MAP
         Map<TableName, List<CardData>> dataMap = new HashMap<>();
         
@@ -777,11 +782,13 @@ public class MainFormController {
         Spreadsheet s = new Spreadsheet(dataMap);
         try {
             s.save();
-            lblPrint.setText("Saved as Excel spreadsheet!");
+            Platform.runLater(() -> {
+                lblPrint.setText("Saved as Excel spreadsheet!");
+            });
         } catch (IOException ex) {
             LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
-            lblPrint.setText("Unable to save spreadsheet.");
             Platform.runLater(() -> {
+                lblPrint.setText("Unable to save spreadsheet.");
                 if (ex.getMessage().contains("being used by another process")) {
                     ErrorHandler.ErrorMsg("File Save Error", "The file is currently open in Excel.", "Close the open file and try again.");
                 } else {
@@ -790,10 +797,16 @@ public class MainFormController {
             });
         } catch (RuntimeException ex) {
             LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
-            lblPrint.setText("No data to save.");
+            Platform.runLater(() -> {
+                lblPrint.setText("No data to save.");
+            });
         }
         // Update label 
-        displayMessage();
+        Platform.runLater(() -> {
+            displayMessage();
+        });
+        
+        }).start();
     }
 
     /**
