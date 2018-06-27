@@ -637,6 +637,8 @@ public class MainFormController {
 
     @FXML
     private void print() {
+        lblPrint.setText("Please wait...");
+
         WritableImage image;
 
         if (tabOnShelf.isSelected()) {
@@ -666,7 +668,7 @@ public class MainFormController {
         try {
             boolean printed = new PrintImage().sendToDefault(file.getAbsolutePath(), 1, OrientationRequested.LANDSCAPE);
             if (printed) {
-                lblPrint.setText("Image sent to printer.");
+                lblPrint.setText("Image sent to default printer.");
             } else {
                 lblPrint.setText("Printing was cancelled.\nPlease check your default printer.");
             }
@@ -690,6 +692,7 @@ public class MainFormController {
         }
 
         displayMessage();
+
     }
 
     private void displayMessage() {
@@ -706,106 +709,69 @@ public class MainFormController {
     @FXML
     private void save() {
         lblPrint.setText("Please wait...");
-        
-        new Thread( () -> {
-            
-        
-        // BUILD DATA MAP
-        Map<TableName, List<CardData>> dataMap = new HashMap<>();
-        
-        Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
-        
-        // IN VAULT
-        dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(
-                ListUtils.selectRejected(scs_mTachoTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(scs_fTachoTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.INVAULT_BRP, ListUtils.union(
-                ListUtils.selectRejected(scs_mBrpTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(scs_fBrpTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.INVAULT_POL, ListUtils.union(
-                ListUtils.selectRejected(scs_mPolTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(scs_fPolTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.INVAULT_DQC, ListUtils.union(
-                ListUtils.selectRejected(scs_mDqcTable.getItems(), fieldsToIgnore),
-                ListUtils.selectRejected(scs_fDqcTable.getItems(), fieldsToIgnore)
-                ));
-        
-        // IN CRATE
-        dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mTachoTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(onCrate_fTachoTable.getItems(), fieldsToIgnore)
-                ));    
-        
-        dataMap.put(TableName.INCRATE_BRP, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mBrpTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(onCrate_fBrpTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.INCRATE_POL, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mPolTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(onCrate_fPolTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.INCRATE_DQC, ListUtils.union(
-                ListUtils.selectRejected(onCrate_mDqcTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(onCrate_fDqcTable.getItems(), fieldsToIgnore)
-                ));
-        
-        // FIRST UCI
-        dataMap.put(TableName.UCI_TACHO, ListUtils.union(
-                ListUtils.selectRejected(uci_mTachoTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(uci_fTachoTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.UCI_BRP, ListUtils.union(
-                ListUtils.selectRejected(uci_mBrpTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(uci_fBrpTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.UCI_POL, ListUtils.union(
-                ListUtils.selectRejected(uci_mPolTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(uci_fPolTable.getItems(), fieldsToIgnore)
-                ));
-        
-        dataMap.put(TableName.UCI_DQC, ListUtils.union(
-                ListUtils.selectRejected(uci_mDqcTable.getItems(), fieldsToIgnore), 
-                ListUtils.selectRejected(uci_fDqcTable.getItems(), fieldsToIgnore)
-                ));
-        
-        // SAVE TO EXCEL SPREADSHEET
-        Spreadsheet s = new Spreadsheet(dataMap);
-        try {
-            s.save();
+
+        new Thread(() -> {
+
+            // BUILD DATA MAP
+            Map<TableName, List<CardData>> dataMap = new HashMap<>();
+
+            Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
+
+            // IN VAULT
+            dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(ListUtils.selectRejected(scs_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fTachoTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INVAULT_BRP, ListUtils.union(ListUtils.selectRejected(scs_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fBrpTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INVAULT_POL, ListUtils.union(ListUtils.selectRejected(scs_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fPolTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INVAULT_DQC, ListUtils.union(ListUtils.selectRejected(scs_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fDqcTable.getItems(), fieldsToIgnore)));
+
+            // IN CRATE
+            dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(ListUtils.selectRejected(onCrate_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fTachoTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INCRATE_BRP, ListUtils.union(ListUtils.selectRejected(onCrate_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fBrpTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INCRATE_POL, ListUtils.union(ListUtils.selectRejected(onCrate_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fPolTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.INCRATE_DQC, ListUtils.union(ListUtils.selectRejected(onCrate_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fDqcTable.getItems(), fieldsToIgnore)));
+
+            // FIRST UCI
+            dataMap.put(TableName.UCI_TACHO, ListUtils.union(ListUtils.selectRejected(uci_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fTachoTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.UCI_BRP, ListUtils.union(ListUtils.selectRejected(uci_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fBrpTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.UCI_POL, ListUtils.union(ListUtils.selectRejected(uci_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fPolTable.getItems(), fieldsToIgnore)));
+
+            dataMap.put(TableName.UCI_DQC, ListUtils.union(ListUtils.selectRejected(uci_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fDqcTable.getItems(), fieldsToIgnore)));
+
+            // SAVE TO EXCEL SPREADSHEET
+            Spreadsheet s = new Spreadsheet(dataMap);
+            try {
+                s.save();
+                Platform.runLater(() -> {
+                    lblPrint.setText("Saved as Excel spreadsheet!");
+                });
+            } catch (IOException ex) {
+                LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
+                Platform.runLater(() -> {
+                    lblPrint.setText("Unable to save spreadsheet.");
+                    if (ex.getMessage().contains("being used by another process")) {
+                        ErrorHandler.ErrorMsg("File Save Error", "The file is currently open in Excel.", "Close the open file and try again.");
+                    } else {
+                        ErrorHandler.ErrorMsg("File Save Error", "Unable to save the spreadsheet.", "Check you have permission to save to this directory.");
+                    }
+                });
+            } catch (RuntimeException ex) {
+                LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
+                Platform.runLater(() -> {
+                    lblPrint.setText("No data to save.");
+                });
+            }
+            // Update label
             Platform.runLater(() -> {
-                lblPrint.setText("Saved as Excel spreadsheet!");
+                displayMessage();
             });
-        } catch (IOException ex) {
-            LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
-            Platform.runLater(() -> {
-                lblPrint.setText("Unable to save spreadsheet.");
-                if (ex.getMessage().contains("being used by another process")) {
-                    ErrorHandler.ErrorMsg("File Save Error", "The file is currently open in Excel.", "Close the open file and try again.");
-                } else {
-                    ErrorHandler.ErrorMsg("File Save Error", "Unable to save the spreadsheet.", "Check you have permission to save to this directory.");
-                }
-            });
-        } catch (RuntimeException ex) {
-            LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
-            Platform.runLater(() -> {
-                lblPrint.setText("No data to save.");
-            });
-        }
-        // Update label 
-        Platform.runLater(() -> {
-            displayMessage();
-        });
-        
+
         }).start();
     }
 

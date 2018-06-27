@@ -10,6 +10,11 @@
 		<!-- LOG4J -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>2.10.0</version>
 		</dependency>
@@ -19,25 +24,40 @@
 			<artifactId>gson</artifactId>
 			<version>2.3.1</version>
 		</dependency>
-		<!-- COMMONS-LANG -->
+		<!-- COMMONS LANG -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.7</version>
 		</dependency>
-		<!-- JERSEY HTTP MULTIPART & CLIENT-->
+		<!-- JERSEY HTTP -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>2.26</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.26</version>
+		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
 			<version>2.26</version>
 		</dependency>
-		<!-- XML PARSER -->
+<!-- 		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.26</version>
+		</dependency> -->
+		<!-- JACKSON XML PARSER -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>2.9.5</version>
 		</dependency>
-		<!-- EXCEL PARSER -->
+		<!-- APACHE EXCEL -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
