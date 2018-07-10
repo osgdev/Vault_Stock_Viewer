@@ -78,9 +78,9 @@
       </HBox>
       <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab fx:id="tabOnShelf" text="On Shelf">
+          <Tab fx:id="onShelf_Tab" text="On Shelf">
                <content>
-                  <GridPane fx:id="gridOnShelf" alignment="CENTER" hgap="10.0" vgap="40.0">
+                  <GridPane fx:id="onShelf_Grid" alignment="CENTER" hgap="10.0" vgap="40.0">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -93,86 +93,71 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lblMorriston_scs" alignment="CENTER" text="MORRISTON" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="onShelf_lblMorriston" alignment="CENTER" text="MORRISTON" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lblFforestfach_scs" text="FFORESTFACH" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label fx:id="onShelf_lblFforestfach" text="FFORESTFACH" GridPane.columnIndex="0" GridPane.rowIndex="1">
                             <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                          </Label>
-                        <TableView fx:id="scs_mTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
+                        <TableView fx:id="onShelf_mTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
                             <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_mTachoCol_Card" editable="false" prefWidth="75.0" sortable="false" text="TACHO" />
-                            <TableColumn id="vol" fx:id="scs_mTachoCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_mTachoCol_Card" editable="false" prefWidth="75.0" sortable="false" text="TACHO" />
+                            <TableColumn id="vol" fx:id="onShelf_mTachoCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
+                        <TableView fx:id="onShelf_mBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
                         	<placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_mBrpCol_Card" editable="false" prefWidth="75.0" sortable="false" text="BRP" />
-                            <TableColumn id="vol" fx:id="scs_mBrpCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_mBrpCol_Card" editable="false" prefWidth="75.0" sortable="false" text="BRP" />
+                            <TableColumn id="vol" fx:id="onShelf_mBrpCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
+                        <TableView fx:id="onShelf_mPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_mPolCol_Card" editable="false" prefWidth="75.0" sortable="false" text="POL" />
-                            <TableColumn id="vol" fx:id="scs_mPolCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_mPolCol_Card" editable="false" prefWidth="75.0" sortable="false" text="POL" />
+                            <TableColumn id="vol" fx:id="onShelf_mPolCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_mDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
+                        <TableView fx:id="onShelf_mDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_mDqcCol_Card" editable="false" prefWidth="75.0" sortable="false" text="DQC" />
-                            <TableColumn id="vol" fx:id="scs_mDqcCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_mDqcCol_Card" editable="false" prefWidth="75.0" sortable="false" text="DQC" />
+                            <TableColumn id="vol" fx:id="onShelf_mDqcCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <TableView fx:id="scs_fTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TableView fx:id="onShelf_fTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_fTachoCol_Card" editable="false" prefWidth="75.0" sortable="false" text="TACHO" />
-                            <TableColumn id="vol" fx:id="scs_fTachoCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
-                          </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                           <GridPane.margin>
-                              <Insets bottom="5.0" />
-                           </GridPane.margin>
-                        </TableView>
-                        <TableView fx:id="scs_fBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                          <placeholder>
-        						<Label text="Nothing in stock!" />
-    						</placeholder>
-                          <columns>
-                            <TableColumn fx:id="scs_fBrpCol_Card" editable="false" prefWidth="75.0" sortable="false" text="BRP" />
-                            <TableColumn id="vol" fx:id="scs_fBrpCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_fTachoCol_Card" editable="false" prefWidth="75.0" sortable="false" text="TACHO" />
+                            <TableColumn id="vol" fx:id="onShelf_fTachoCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -181,13 +166,13 @@
                               <Insets bottom="5.0" />
                            </GridPane.margin>
                         </TableView>
-                        <TableView fx:id="scs_fPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TableView fx:id="onShelf_fBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_fPolCol_Card" editable="false" prefWidth="75.0" sortable="false" text="POL" />
-                            <TableColumn id="vol" fx:id="scs_fPolCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_fBrpCol_Card" editable="false" prefWidth="75.0" sortable="false" text="BRP" />
+                            <TableColumn id="vol" fx:id="onShelf_fBrpCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -196,13 +181,28 @@
                               <Insets bottom="5.0" />
                            </GridPane.margin>
                         </TableView>
-                        <TableView fx:id="scs_fDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                        <TableView fx:id="onShelf_fPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
                           <placeholder>
         						<Label text="Nothing in stock!" />
     						</placeholder>
                           <columns>
-                            <TableColumn fx:id="scs_fDqcCol_Card" editable="false" prefWidth="75.0" sortable="false" text="DQC" />
-                            <TableColumn id="vol" fx:id="scs_fDqcCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                            <TableColumn fx:id="onShelf_fPolCol_Card" editable="false" prefWidth="75.0" sortable="false" text="POL" />
+                            <TableColumn id="vol" fx:id="onShelf_fPolCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" />
+                           </GridPane.margin>
+                        </TableView>
+                        <TableView fx:id="onShelf_fDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="onShelf_fDqcCol_Card" editable="false" prefWidth="75.0" sortable="false" text="DQC" />
+                            <TableColumn id="vol" fx:id="onShelf_fDqcCol_Vol" editable="false" prefWidth="75.0" sortable="false" text="VOLUME" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -218,9 +218,9 @@
                   </GridPane>
                </content>
             </Tab>
-          <Tab fx:id="tabInCrate" text="In Crates">
+          <Tab fx:id="onCrate_Tab" text="In Crates">
            <content>
-                  <GridPane fx:id="gridInCrate" alignment="CENTER" hgap="10.0" vgap="40.0">
+                  <GridPane fx:id="onCrate_Grid" alignment="CENTER" hgap="10.0" vgap="40.0">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -233,12 +233,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label fx:id="lblMorriston_onCrate" text="MORRISTON" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="onCrate_lblMorriston" text="MORRISTON" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Label fx:id="lblFforestfach_onCrate" text="FFORESTFACH" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label fx:id="onCrate_lblFforestfach" text="FFORESTFACH" GridPane.columnIndex="0" GridPane.rowIndex="1">
                             <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
@@ -358,9 +358,149 @@
                   </GridPane>
                </content>
             </Tab>
-          <Tab fx:id="tabFirstUci" text="First UCIs">
+            <Tab fx:id="allStock_Tab" text="All Stock">
            <content>
-                  <GridPane fx:id="gridFirstUci" alignment="CENTER" hgap="10.0" vgap="40.0">
+                  <GridPane fx:id="allStock_Grid" alignment="CENTER" hgap="10.0" vgap="40.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="allStock_lblMorriston" text="MORRISTON" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="allStock_lblFforestfach" text="FFORESTFACH" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                         </Label>
+                        <TableView fx:id="allStock_mTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_mTachoCol_Card" prefWidth="75.0" text="TACHO" />
+                            <TableColumn id="vol" fx:id="allStock_mTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                        <TableView fx:id="allStock_mBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_mBrpCol_Card" prefWidth="75.0" text="BRP" />
+                            <TableColumn id="vol" fx:id="allStock_mBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                        <TableView fx:id="allStock_mPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_mPolCol_Card" prefWidth="75.0" text="POL" />
+                            <TableColumn id="vol" fx:id="allStock_mPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                        <TableView fx:id="allStock_mDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_mDqcCol_Card" prefWidth="75.0" text="DQC" />
+                            <TableColumn id="vol" fx:id="allStock_mDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                        <TableView fx:id="allStock_fTachoTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_fTachoCol_Card" prefWidth="75.0" text="TACHO" />
+                            <TableColumn id="vol" fx:id="allStock_fTachoCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" />
+                           </GridPane.margin>
+                        </TableView>
+                        <TableView fx:id="allStock_fBrpTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_fBrpCol_Card" prefWidth="75.0" text="BRP" />
+                            <TableColumn id="vol" fx:id="allStock_fBrpCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" />
+                           </GridPane.margin>
+                        </TableView>
+                        <TableView fx:id="allStock_fPolTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_fPolCol_Card" prefWidth="75.0" text="POL" />
+                            <TableColumn id="vol" fx:id="allStock_fPolCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" />
+                           </GridPane.margin>
+                        </TableView>
+                        <TableView fx:id="allStock_fDqcTable" fixedCellSize="25.0" maxHeight="201.0" minHeight="201.0" stylesheets="@../CSS/mainform.css" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                          <placeholder>
+        						<Label text="Nothing in stock!" />
+    						</placeholder>
+                          <columns>
+                            <TableColumn fx:id="allStock_fDqcCol_Card" prefWidth="75.0" text="DQC" />
+                            <TableColumn id="vol" fx:id="allStock_fDqcCol_Vol" prefWidth="75.0" text="VOLUME" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <GridPane.margin>
+                              <Insets bottom="5.0" />
+                           </GridPane.margin>
+                        </TableView>
+                     </children>
+                     <padding>
+                        <Insets right="30.0" top="30.0" />
+                     </padding>
+                  </GridPane>
+               </content>
+            </Tab>
+          <Tab fx:id="firstUci_Tab" text="First UCIs">
+           <content>
+                  <GridPane fx:id="firstUci_Grid" alignment="CENTER" hgap="10.0" vgap="40.0">
                     <columnConstraints>
                       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

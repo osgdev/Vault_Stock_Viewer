@@ -47,26 +47,36 @@ public class Spreadsheet {
         XSSFWorkbook workbook = new XSSFWorkbook();
         createWorkbookStyles(workbook);
 
-        // InVault sheet
-        XSSFSheet sheet_IVB = workbook.createSheet("In Vault");
+        // On Shelf sheet
+        XSSFSheet sheet_IVB = workbook.createSheet("On Shelf");
         createRows(sheet_IVB);
-        addData(TableName.INVAULT_TACHO, sheet_IVB, 0);
-        addData(TableName.INVAULT_BRP, sheet_IVB, 4);
-        addData(TableName.INVAULT_POL, sheet_IVB, 8);
-        addData(TableName.INVAULT_DQC, sheet_IVB, 12);
+        addData(TableName.ONSHELF_TACHO, sheet_IVB, 0);
+        addData(TableName.ONSHELF_BRP, sheet_IVB, 4);
+        addData(TableName.ONSHELF_POL, sheet_IVB, 8);
+        addData(TableName.ONSHELF_DQC, sheet_IVB, 12);
         addTotalRow(sheet_IVB);
         setColumnWidths(sheet_IVB);
 
-        // InCrate sheet
+        // On Crate sheet
         XSSFSheet sheet_ICB = workbook.createSheet("In Crate");
         createRows(sheet_ICB);
-        addData(TableName.INCRATE_TACHO, sheet_ICB, 0);
-        addData(TableName.INCRATE_BRP, sheet_ICB, 4);
-        addData(TableName.INCRATE_POL, sheet_ICB, 8);
-        addData(TableName.INCRATE_DQC, sheet_ICB, 12);
+        addData(TableName.ONCRATE_TACHO, sheet_ICB, 0);
+        addData(TableName.ONCRATE_BRP, sheet_ICB, 4);
+        addData(TableName.ONCRATE_POL, sheet_ICB, 8);
+        addData(TableName.ONCRATE_DQC, sheet_ICB, 12);
         addTotalRow(sheet_ICB);
         setColumnWidths(sheet_ICB);
 
+        // All Stock sheet
+        XSSFSheet sheet_ASB = workbook.createSheet("All Stock");
+        createRows(sheet_ASB);
+        addData(TableName.ALLSTOCK_TACHO, sheet_ASB, 0);
+        addData(TableName.ALLSTOCK_BRP, sheet_ASB, 4);
+        addData(TableName.ALLSTOCK_POL, sheet_ASB, 8);
+        addData(TableName.ALLSTOCK_DQC, sheet_ASB, 12);
+        addTotalRow(sheet_ASB);
+        setColumnWidths(sheet_ASB);
+        
         // First UCI sheet
         XSSFSheet sheet_UCI = workbook.createSheet("UCI's");
         createRows(sheet_UCI);

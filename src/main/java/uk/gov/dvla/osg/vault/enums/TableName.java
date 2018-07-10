@@ -1,18 +1,24 @@
 package uk.gov.dvla.osg.vault.enums;
 
 public enum TableName {
-    // IN VAULT
-    INVAULT_TACHO ("TACHO"),
-    INVAULT_BRP ("BRP"),
-    INVAULT_POL ("POL"),
-    INVAULT_DQC ("DQC"),
+    // ON SHELF
+    ONSHELF_TACHO ("TACHO"),
+    ONSHELF_BRP ("BRP"),
+    ONSHELF_POL ("POL"),
+    ONSHELF_DQC ("DQC"),
 
     // IN CRATE
-    INCRATE_TACHO ("TACHO"),
-    INCRATE_BRP ("BRP"),
-    INCRATE_POL ("POL"),
-    INCRATE_DQC ("DQC"),
+    ONCRATE_TACHO ("TACHO"),
+    ONCRATE_BRP ("BRP"),
+    ONCRATE_POL ("POL"),
+    ONCRATE_DQC ("DQC"),
 
+    // ALL STOCK
+    ALLSTOCK_TACHO ("TACHO"),
+    ALLSTOCK_BRP ("BRP"),
+    ALLSTOCK_POL ("POL"),
+    ALLSTOCK_DQC ("DQC"),
+    
     // FIRST UCI
     UCI_TACHO ("TACHO"),
     UCI_BRP ("BRP"),

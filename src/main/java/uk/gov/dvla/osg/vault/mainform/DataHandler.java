@@ -22,7 +22,7 @@ public class DataHandler {
         this.model = model;
     }
 
-    public ObservableList<CardData> getScsDataForBothSites(CardClass cardClass, Site site) {
+    public ObservableList<CardData> getOnShelfDataForBothSites(CardClass cardClass, Site site) {
         Predicate<? super CardStock> sitePredicate = card -> card.getSite().equals(site);
         Predicate<? super Volume> volPredicate = volume -> volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED);
         return getData(cardClass, sitePredicate, volPredicate, true);
@@ -34,7 +34,13 @@ public class DataHandler {
         return getData(cardClass, sitePredicate, volPredicate, true);
     }
 
-    public ObservableList<CardData> getScsDataForCombined(CardClass cardClass) {
+    public ObservableList<CardData> getAllStockDataForBothSites(CardClass cardClass, Site site) {
+        Predicate<? super CardStock> sitePredicate = card -> card.getSite().equals(site);
+        Predicate<? super Volume> volPredicate = volume -> volume.getStatus().equals(Status.ONCRATE) || volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED);
+        return getData(cardClass, sitePredicate, volPredicate, true);
+    }
+    
+    public ObservableList<CardData> getOnShelfDataForCombined(CardClass cardClass) {
         Predicate<? super CardStock> sitePredicate = card -> true;
         Predicate<? super Volume> volPredicate = volume -> volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED);
         return getData(cardClass, sitePredicate, volPredicate, true);
@@ -43,6 +49,12 @@ public class DataHandler {
     public ObservableList<CardData> getOnCrateDataForCombined(CardClass cardClass) {
         Predicate<? super CardStock> sitePredicate = card -> true;
         Predicate<? super Volume> volPredicate = volume -> volume.getStatus().equals(Status.ONCRATE);
+        return getData(cardClass, sitePredicate, volPredicate, true);
+    }
+    
+    public ObservableList<CardData> getAllStockDataForCombined(CardClass cardClass) {
+        Predicate<? super CardStock> sitePredicate = card -> true;
+        Predicate<? super Volume> volPredicate = volume -> volume.getStatus().equals(Status.INVAULT) || volume.getStatus().equals(Status.OPENED) || volume.getStatus().equals(Status.ONCRATE);
         return getData(cardClass, sitePredicate, volPredicate, true);
     }
     
@@ -100,4 +112,5 @@ public class DataHandler {
         }
         return cardDataList;
     }
+
 }

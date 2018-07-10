@@ -14,6 +14,7 @@ import javax.print.attribute.standard.OrientationRequested;
 
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,214 +58,166 @@ public class MainFormController {
     private final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
 
     // TOP SECTION
-    @FXML
-    private ChoiceBox environmentChoice;
-    @FXML
-    private ChoiceBox siteChoice;
-    @FXML
-    private Label lblPrint;
-    @FXML
-    private Button btnPrint;
-    @FXML
-    private Label lblExcel;
-    @FXML
-    private Button btnExcel;
-    @FXML
-    private Label lblTime;
-    @FXML
-    private Button refreshBtn;
-    @FXML
-    private Tab tabOnShelf;
-    @FXML
-    private Tab tabInCrate;
-    @FXML
-    private Tab tabFirstUci;
-    @FXML
-    private GridPane gridOnShelf;
-    @FXML
-    private GridPane gridInCrate;
-    @FXML
-    private GridPane gridFirstUci;
+    @FXML private ChoiceBox environmentChoice;
+    @FXML private ChoiceBox siteChoice;
+    @FXML private Label lblPrint;
+    @FXML private Button btnPrint;
+    @FXML private Label lblExcel;
+    @FXML private Button btnExcel;
+    @FXML private Label lblTime;
+    @FXML private Button refreshBtn;
+    
+    // TABS
+    @FXML private Tab onShelf_Tab;
+    @FXML private Tab onCrate_Tab;
+    @FXML private Tab firstUci_Tab;
+    @FXML private Tab allStock_Tab;
+    
+    // GRIDS
+    @FXML private GridPane onShelf_Grid;
+    @FXML private GridPane onCrate_Grid;
+    @FXML private GridPane firstUci_Grid;
+    @FXML private GridPane allStock_Grid;
+    
+    // SIDE LABELS
+    @FXML private Label onShelf_lblMorriston;
+    @FXML private Label onShelf_lblFforestfach;
+    @FXML private Label onCrate_lblMorriston;
+    @FXML private Label onCrate_lblFforestfach;
+    @FXML private Label allStock_lblMorriston;
+    @FXML private Label allStock_lblFforestfach;
 
-    @FXML
-    private Label lblMorriston_scs;
-    @FXML
-    private Label lblFforestfach_scs;
-    @FXML
-    private Label lblMorriston_onCrate;
-    @FXML
-    private Label lblFforestfach_onCrate;
+    // TABLES - CARDS IN VAULT
+    @FXML private TableView<CardData> onShelf_mTachoTable;
+    @FXML private TableColumn<CardData, String> onShelf_mTachoCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_mTachoCol_Vol;
 
-    // TABLES - CARDS IN SCS
-    @FXML
-    private TableView<CardData> scs_mTachoTable;
-    @FXML
-    private TableColumn<CardData, String> scs_mTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_mTachoCol_Vol;
+    @FXML private TableView<CardData> onShelf_mBrpTable;
+    @FXML private TableColumn<CardData, String> onShelf_mBrpCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_mBrpCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_mBrpTable;
-    @FXML
-    private TableColumn<CardData, String> scs_mBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_mBrpCol_Vol;
+    @FXML private TableView<CardData> onShelf_mPolTable;
+    @FXML private TableColumn<CardData, String> onShelf_mPolCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_mPolCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_mPolTable;
-    @FXML
-    private TableColumn<CardData, String> scs_mPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_mPolCol_Vol;
+    @FXML private TableView<CardData> onShelf_mDqcTable;
+    @FXML private TableColumn<CardData, String> onShelf_mDqcCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_mDqcCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_mDqcTable;
-    @FXML
-    private TableColumn<CardData, String> scs_mDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_mDqcCol_Vol;
+    @FXML private TableView<CardData> onShelf_fTachoTable;
+    @FXML private TableColumn<CardData, String> onShelf_fTachoCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_fTachoCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_fTachoTable;
-    @FXML
-    private TableColumn<CardData, String> scs_fTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_fTachoCol_Vol;
+    @FXML private TableView<CardData> onShelf_fBrpTable;
+    @FXML private TableColumn<CardData, String> onShelf_fBrpCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_fBrpCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_fBrpTable;
-    @FXML
-    private TableColumn<CardData, String> scs_fBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_fBrpCol_Vol;
+    @FXML private TableView<CardData> onShelf_fPolTable;
+    @FXML private TableColumn<CardData, String> onShelf_fPolCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_fPolCol_Vol;
 
-    @FXML
-    private TableView<CardData> scs_fPolTable;
-    @FXML
-    private TableColumn<CardData, String> scs_fPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_fPolCol_Vol;
-
-    @FXML
-    private TableView<CardData> scs_fDqcTable;
-    @FXML
-    private TableColumn<CardData, String> scs_fDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> scs_fDqcCol_Vol;
+    @FXML private TableView<CardData> onShelf_fDqcTable;
+    @FXML private TableColumn<CardData, String> onShelf_fDqcCol_Card;
+    @FXML private TableColumn<CardData, String> onShelf_fDqcCol_Vol;
 
     // TABLES - CARDS OnCrate
-    @FXML
-    private TableView<CardData> onCrate_mTachoTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mTachoCol_Vol;
+    @FXML private TableView<CardData> onCrate_mTachoTable;
+    @FXML private TableColumn<CardData, String> onCrate_mTachoCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_mTachoCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_mBrpTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mBrpCol_Vol;
+    @FXML private TableView<CardData> onCrate_mBrpTable;
+    @FXML private TableColumn<CardData, String> onCrate_mBrpCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_mBrpCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_mPolTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mPolCol_Vol;
+    @FXML private TableView<CardData> onCrate_mPolTable;
+    @FXML private TableColumn<CardData, String> onCrate_mPolCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_mPolCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_mDqcTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_mDqcCol_Vol;
+    @FXML private TableView<CardData> onCrate_mDqcTable;
+    @FXML private TableColumn<CardData, String> onCrate_mDqcCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_mDqcCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_fTachoTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fTachoCol_Vol;
+    @FXML private TableView<CardData> onCrate_fTachoTable;
+    @FXML private TableColumn<CardData, String> onCrate_fTachoCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_fTachoCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_fBrpTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fBrpCol_Vol;
+    @FXML private TableView<CardData> onCrate_fBrpTable;
+    @FXML private TableColumn<CardData, String> onCrate_fBrpCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_fBrpCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_fPolTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fPolCol_Vol;
+    @FXML private TableView<CardData> onCrate_fPolTable;
+    @FXML private TableColumn<CardData, String> onCrate_fPolCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_fPolCol_Vol;
 
-    @FXML
-    private TableView<CardData> onCrate_fDqcTable;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> onCrate_fDqcCol_Vol;
+    @FXML private TableView<CardData> onCrate_fDqcTable;
+    @FXML private TableColumn<CardData, String> onCrate_fDqcCol_Card;
+    @FXML private TableColumn<CardData, String> onCrate_fDqcCol_Vol;
 
+    // TABLES - All Stock
+    @FXML private TableView<CardData> allStock_mTachoTable;
+    @FXML private TableColumn<CardData, String> allStock_mTachoCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_mTachoCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_mBrpTable;
+    @FXML private TableColumn<CardData, String> allStock_mBrpCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_mBrpCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_mPolTable;
+    @FXML private TableColumn<CardData, String> allStock_mPolCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_mPolCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_mDqcTable;
+    @FXML private TableColumn<CardData, String> allStock_mDqcCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_mDqcCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_fTachoTable;
+    @FXML private TableColumn<CardData, String> allStock_fTachoCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_fTachoCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_fBrpTable;
+    @FXML private TableColumn<CardData, String> allStock_fBrpCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_fBrpCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_fPolTable;
+    @FXML private TableColumn<CardData, String> allStock_fPolCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_fPolCol_Vol;
+    
+    @FXML private TableView<CardData> allStock_fDqcTable;
+    @FXML private TableColumn<CardData, String> allStock_fDqcCol_Card;
+    @FXML private TableColumn<CardData, String> allStock_fDqcCol_Vol;
+    
     // TABLES - CARDS UCI
-    @FXML
-    private TableView<CardData> uci_mTachoTable;
-    @FXML
-    private TableColumn<CardData, String> uci_mTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_mTachoCol_uci;
+    @FXML private TableView<CardData> uci_mTachoTable;
+    @FXML private TableColumn<CardData, String> uci_mTachoCol_Card;
+    @FXML private TableColumn<CardData, String> uci_mTachoCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_mBrpTable;
-    @FXML
-    private TableColumn<CardData, String> uci_mBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_mBrpCol_uci;
+    @FXML private TableView<CardData> uci_mBrpTable;
+    @FXML private TableColumn<CardData, String> uci_mBrpCol_Card;
+    @FXML private TableColumn<CardData, String> uci_mBrpCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_mPolTable;
-    @FXML
-    private TableColumn<CardData, String> uci_mPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_mPolCol_uci;
+    @FXML private TableView<CardData> uci_mPolTable;
+    @FXML private TableColumn<CardData, String> uci_mPolCol_Card;
+    @FXML private TableColumn<CardData, String> uci_mPolCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_mDqcTable;
-    @FXML
-    private TableColumn<CardData, String> uci_mDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_mDqcCol_uci;
+    @FXML private TableView<CardData> uci_mDqcTable;
+    @FXML private TableColumn<CardData, String> uci_mDqcCol_Card;
+    @FXML private TableColumn<CardData, String> uci_mDqcCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_fTachoTable;
-    @FXML
-    private TableColumn<CardData, String> uci_fTachoCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_fTachoCol_uci;
+    @FXML private TableView<CardData> uci_fTachoTable;
+    @FXML private TableColumn<CardData, String> uci_fTachoCol_Card;
+    @FXML private TableColumn<CardData, String> uci_fTachoCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_fBrpTable;
-    @FXML
-    private TableColumn<CardData, String> uci_fBrpCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_fBrpCol_uci;
+    @FXML private TableView<CardData> uci_fBrpTable;
+    @FXML private TableColumn<CardData, String> uci_fBrpCol_Card;
+    @FXML private TableColumn<CardData, String> uci_fBrpCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_fPolTable;
-    @FXML
-    private TableColumn<CardData, String> uci_fPolCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_fPolCol_uci;
+    @FXML private TableView<CardData> uci_fPolTable;
+    @FXML private TableColumn<CardData, String> uci_fPolCol_Card;
+    @FXML private TableColumn<CardData, String> uci_fPolCol_uci;
 
-    @FXML
-    private TableView<CardData> uci_fDqcTable;
-    @FXML
-    private TableColumn<CardData, String> uci_fDqcCol_Card;
-    @FXML
-    private TableColumn<CardData, String> uci_fDqcCol_uci;
+    @FXML private TableView<CardData> uci_fDqcTable;
+    @FXML private TableColumn<CardData, String> uci_fDqcCol_Card;
+    @FXML private TableColumn<CardData, String> uci_fDqcCol_uci;
 
     private VaultStock vaultStock;
     private DataHandler dataHandler;
@@ -374,23 +327,23 @@ public class MainFormController {
         PropertyValueFactory<CardData, String> propValCardVol = new PropertyValueFactory<>("volume");
         PropertyValueFactory<CardData, String> propValCardUci = new PropertyValueFactory<>("uci");
         // SCS - MORRISTON
-        scs_mTachoCol_Card.setCellValueFactory(propValCardType);
-        scs_mTachoCol_Vol.setCellValueFactory(propValCardVol);
-        scs_mBrpCol_Card.setCellValueFactory(propValCardType);
-        scs_mBrpCol_Vol.setCellValueFactory(propValCardVol);
-        scs_mPolCol_Card.setCellValueFactory(propValCardType);
-        scs_mPolCol_Vol.setCellValueFactory(propValCardVol);
-        scs_mDqcCol_Card.setCellValueFactory(propValCardType);
-        scs_mDqcCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_mTachoCol_Card.setCellValueFactory(propValCardType);
+        onShelf_mTachoCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_mBrpCol_Card.setCellValueFactory(propValCardType);
+        onShelf_mBrpCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_mPolCol_Card.setCellValueFactory(propValCardType);
+        onShelf_mPolCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_mDqcCol_Card.setCellValueFactory(propValCardType);
+        onShelf_mDqcCol_Vol.setCellValueFactory(propValCardVol);
         // SCS - FFORESTFACH
-        scs_fTachoCol_Card.setCellValueFactory(propValCardType);
-        scs_fTachoCol_Vol.setCellValueFactory(propValCardVol);
-        scs_fBrpCol_Card.setCellValueFactory(propValCardType);
-        scs_fBrpCol_Vol.setCellValueFactory(propValCardVol);
-        scs_fPolCol_Card.setCellValueFactory(propValCardType);
-        scs_fPolCol_Vol.setCellValueFactory(propValCardVol);
-        scs_fDqcCol_Card.setCellValueFactory(propValCardType);
-        scs_fDqcCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_fTachoCol_Card.setCellValueFactory(propValCardType);
+        onShelf_fTachoCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_fBrpCol_Card.setCellValueFactory(propValCardType);
+        onShelf_fBrpCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_fPolCol_Card.setCellValueFactory(propValCardType);
+        onShelf_fPolCol_Vol.setCellValueFactory(propValCardVol);
+        onShelf_fDqcCol_Card.setCellValueFactory(propValCardType);
+        onShelf_fDqcCol_Vol.setCellValueFactory(propValCardVol);
         // ON CRATE - MORRISTON
         onCrate_mTachoCol_Card.setCellValueFactory(propValCardType);
         onCrate_mTachoCol_Vol.setCellValueFactory(propValCardVol);
@@ -409,6 +362,24 @@ public class MainFormController {
         onCrate_fPolCol_Vol.setCellValueFactory(propValCardVol);
         onCrate_fDqcCol_Card.setCellValueFactory(propValCardType);
         onCrate_fDqcCol_Vol.setCellValueFactory(propValCardVol);
+        // ALL STOCK - MORRISTON
+        allStock_mTachoCol_Card.setCellValueFactory(propValCardType);
+        allStock_mTachoCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_mBrpCol_Card.setCellValueFactory(propValCardType);
+        allStock_mBrpCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_mPolCol_Card.setCellValueFactory(propValCardType);
+        allStock_mPolCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_mDqcCol_Card.setCellValueFactory(propValCardType);
+        allStock_mDqcCol_Vol.setCellValueFactory(propValCardVol);
+        // ALL STOCK - FFORESTFACH
+        allStock_fTachoCol_Card.setCellValueFactory(propValCardType);
+        allStock_fTachoCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_fBrpCol_Card.setCellValueFactory(propValCardType);
+        allStock_fBrpCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_fPolCol_Card.setCellValueFactory(propValCardType);
+        allStock_fPolCol_Vol.setCellValueFactory(propValCardVol);
+        allStock_fDqcCol_Card.setCellValueFactory(propValCardType);
+        allStock_fDqcCol_Vol.setCellValueFactory(propValCardVol);
         // UCI - MORRISTON
         uci_mTachoCol_Card.setCellValueFactory(propValCardType);
         uci_mTachoCol_uci.setCellValueFactory(propValCardUci);
@@ -430,57 +401,62 @@ public class MainFormController {
     }
 
     private void setupTableData_BothSites() {
-        lblMorriston_scs.setText("MORRISTON");
-        lblFforestfach_scs.setText("FFORESTFACH");
-        gridOnShelf.setRowSpan(lblMorriston_scs, 1);
+        onShelf_lblMorriston.setText("MORRISTON");
+        onShelf_lblFforestfach.setText("FFORESTFACH");
+        onShelf_Grid.setRowSpan(onShelf_lblMorriston, 1);
 
-        lblMorriston_onCrate.setText("MORRISTON");
-        lblFforestfach_onCrate.setText("FFORESTFACH");
-        gridInCrate.setRowSpan(lblMorriston_onCrate, 1);
+        onCrate_lblMorriston.setText("MORRISTON");
+        onCrate_lblFforestfach.setText("FFORESTFACH");
+        onCrate_Grid.setRowSpan(onCrate_lblMorriston, 1);
 
-        setDataSCS_BothSites();
-        setDataOnCrate_BothSites();
-        setTestDataUCI();
+        allStock_lblMorriston.setText("MORRISTON");
+        allStock_lblFforestfach.setText("FFORESTFACH");
+        onCrate_Grid.setRowSpan(allStock_lblMorriston, 1);
+        
+        setData_InVault_BothSites();
+        setData_OnCrate_BothSites();
+        setData_AllStock_BothSites();
+        setData_UCI();
     }
 
-    private void setDataSCS_BothSites() {
-        scs_mTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.M));
-        gridOnShelf.setRowSpan(scs_mTachoTable, 1);
+    private void setData_InVault_BothSites() {
+        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.TACHO, Site.M));
+        onShelf_Grid.setRowSpan(onShelf_mTachoTable, 1);
 
-        scs_mBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.M));
-        gridOnShelf.setRowSpan(scs_mBrpTable, 1);
+        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.BID, Site.M));
+        onShelf_Grid.setRowSpan(onShelf_mBrpTable, 1);
 
-        scs_mPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.M));
-        gridOnShelf.setRowSpan(scs_mPolTable, 1);
+        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.POL, Site.M));
+        onShelf_Grid.setRowSpan(onShelf_mPolTable, 1);
 
-        scs_mDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.M));
-        gridOnShelf.setRowSpan(scs_mDqcTable, 1);
+        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.DQC, Site.M));
+        onShelf_Grid.setRowSpan(onShelf_mDqcTable, 1);
 
-        scs_fTachoTable.setItems(dataHandler.getScsDataForBothSites(CardClass.TACHO, Site.F));
-        scs_fTachoTable.setVisible(true);
+        onShelf_fTachoTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.TACHO, Site.F));
+        onShelf_fTachoTable.setVisible(true);
 
-        scs_fBrpTable.setItems(dataHandler.getScsDataForBothSites(CardClass.BID, Site.F));
-        scs_fBrpTable.setVisible(true);
+        onShelf_fBrpTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.BID, Site.F));
+        onShelf_fBrpTable.setVisible(true);
 
-        scs_fPolTable.setItems(dataHandler.getScsDataForBothSites(CardClass.POL, Site.F));
-        scs_fPolTable.setVisible(true);
+        onShelf_fPolTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.POL, Site.F));
+        onShelf_fPolTable.setVisible(true);
 
-        scs_fDqcTable.setItems(dataHandler.getScsDataForBothSites(CardClass.DQC, Site.F));
-        scs_fDqcTable.setVisible(true);
+        onShelf_fDqcTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.DQC, Site.F));
+        onShelf_fDqcTable.setVisible(true);
     }
 
-    private void setDataOnCrate_BothSites() {
+    private void setData_OnCrate_BothSites() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.M));
-        gridInCrate.setRowSpan(onCrate_mTachoTable, 1);
+        onCrate_Grid.setRowSpan(onCrate_mTachoTable, 1);
 
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.M));
-        gridInCrate.setRowSpan(onCrate_mBrpTable, 1);
+        onCrate_Grid.setRowSpan(onCrate_mBrpTable, 1);
 
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.M));
-        gridInCrate.setRowSpan(onCrate_mPolTable, 1);
+        onCrate_Grid.setRowSpan(onCrate_mPolTable, 1);
 
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.M));
-        gridInCrate.setRowSpan(onCrate_mDqcTable, 1);
+        onCrate_Grid.setRowSpan(onCrate_mDqcTable, 1);
 
         onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.F));
         onCrate_fTachoTable.setVisible(true);
@@ -495,7 +471,33 @@ public class MainFormController {
         onCrate_fDqcTable.setVisible(true);
     }
 
-    private void setTestDataUCI() {
+    private void setData_AllStock_BothSites() {
+        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.TACHO, Site.M));
+        allStock_Grid.setRowSpan(allStock_mTachoTable, 1);
+
+        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.BID, Site.M));
+        allStock_Grid.setRowSpan(allStock_mBrpTable, 1);
+
+        allStock_mPolTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.POL, Site.M));
+        allStock_Grid.setRowSpan(allStock_mPolTable, 1);
+
+        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.DQC, Site.M));
+        allStock_Grid.setRowSpan(allStock_mDqcTable, 1);
+
+        allStock_fTachoTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.TACHO, Site.F));
+        allStock_fTachoTable.setVisible(true);
+
+        allStock_fBrpTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.BID, Site.F));
+        allStock_fBrpTable.setVisible(true);
+
+        allStock_fPolTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.POL, Site.F));
+        allStock_fPolTable.setVisible(true);
+
+        allStock_fDqcTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.DQC, Site.F));
+        allStock_fDqcTable.setVisible(true);
+    }
+    
+    private void setData_UCI() {
         uci_mTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.M));
         uci_mBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.M));
         uci_mPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.M));
@@ -507,50 +509,55 @@ public class MainFormController {
     }
 
     private void setupTableData_Combined() {
-        lblMorriston_scs.setText("MORRISTON\n&\nFFORESTFACH");
-        lblFforestfach_scs.setText("");
-        gridOnShelf.setRowSpan(lblMorriston_scs, 2);
+        onShelf_lblMorriston.setText("MORRISTON\n&\nFFORESTFACH");
+        onShelf_lblFforestfach.setText("");
+        onShelf_Grid.setRowSpan(onShelf_lblMorriston, 2);
 
-        lblMorriston_onCrate.setText("MORRISTON\n&\nFFORESTFACH");
-        lblFforestfach_onCrate.setText("");
-        gridInCrate.setRowSpan(lblMorriston_onCrate, 2);
+        onCrate_lblMorriston.setText("MORRISTON\n&\nFFORESTFACH");
+        onCrate_lblFforestfach.setText("");
+        onCrate_Grid.setRowSpan(onCrate_lblMorriston, 2);
 
-        setDataSCS_Combined();
-        setDataOnCrate_Combined();
-        setTestDataUCI();
+        allStock_lblMorriston.setText("MORRISTON\n&\nFFORESTFACH");
+        allStock_lblFforestfach.setText("");
+        allStock_Grid.setRowSpan(allStock_lblMorriston, 2);
+        
+        setData_OnShelf_Combined();
+        setData_OnCrate_Combined();
+        setData_AllStock_Combined();
+        setData_UCI();
     }
 
-    private void setDataSCS_Combined() {
-        scs_mTachoTable.setItems(dataHandler.getScsDataForCombined(CardClass.TACHO));
-        gridOnShelf.setRowSpan(scs_mTachoTable, 2);
+    private void setData_OnShelf_Combined() {
+        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.TACHO));
+        onShelf_Grid.setRowSpan(onShelf_mTachoTable, 2);
 
-        scs_mBrpTable.setItems(dataHandler.getScsDataForCombined(CardClass.BID));
-        gridOnShelf.setRowSpan(scs_mBrpTable, 2);
+        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.BID));
+        onShelf_Grid.setRowSpan(onShelf_mBrpTable, 2);
 
-        scs_mPolTable.setItems(dataHandler.getScsDataForCombined(CardClass.POL));
-        gridOnShelf.setRowSpan(scs_mPolTable, 2);
+        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.POL));
+        onShelf_Grid.setRowSpan(onShelf_mPolTable, 2);
 
-        scs_mDqcTable.setItems(dataHandler.getScsDataForCombined(CardClass.DQC));
-        gridOnShelf.setRowSpan(scs_mDqcTable, 2);
+        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.DQC));
+        onShelf_Grid.setRowSpan(onShelf_mDqcTable, 2);
 
-        scs_fTachoTable.setVisible(false);
-        scs_fBrpTable.setVisible(false);
-        scs_fPolTable.setVisible(false);
-        scs_fDqcTable.setVisible(false);
+        onShelf_fTachoTable.setVisible(false);
+        onShelf_fBrpTable.setVisible(false);
+        onShelf_fPolTable.setVisible(false);
+        onShelf_fDqcTable.setVisible(false);
     }
 
-    private void setDataOnCrate_Combined() {
+    private void setData_OnCrate_Combined() {
         onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.TACHO));
-        gridInCrate.setRowSpan(onCrate_mTachoTable, 2);
+        onCrate_Grid.setRowSpan(onCrate_mTachoTable, 2);
 
         onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.BID));
-        gridInCrate.setRowSpan(onCrate_mBrpTable, 2);
+        onCrate_Grid.setRowSpan(onCrate_mBrpTable, 2);
 
         onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
-        gridInCrate.setRowSpan(onCrate_mPolTable, 2);
+        onCrate_Grid.setRowSpan(onCrate_mPolTable, 2);
 
         onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
-        gridInCrate.setRowSpan(onCrate_mDqcTable, 2);
+        onCrate_Grid.setRowSpan(onCrate_mDqcTable, 2);
 
         onCrate_fTachoTable.setVisible(false);
         onCrate_fBrpTable.setVisible(false);
@@ -558,6 +565,25 @@ public class MainFormController {
         onCrate_fDqcTable.setVisible(false);
     }
 
+    private void setData_AllStock_Combined() {
+        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.TACHO));
+        allStock_Grid.setRowSpan(allStock_mTachoTable, 2);
+
+        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.BID));
+        allStock_Grid.setRowSpan(allStock_mBrpTable, 2);
+
+        allStock_mPolTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.POL));
+        allStock_Grid.setRowSpan(allStock_mPolTable, 2);
+
+        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.DQC));
+        allStock_Grid.setRowSpan(allStock_mDqcTable, 2);
+
+        allStock_fTachoTable.setVisible(false);
+        allStock_fBrpTable.setVisible(false);
+        allStock_fPolTable.setVisible(false);
+        allStock_fDqcTable.setVisible(false);
+    }
+    
     private void assignRefreshBtnAction() {
         AtomicInteger taskExecution = new AtomicInteger(0);
 
@@ -616,14 +642,14 @@ public class MainFormController {
     public void highlightTotals() {
         final PseudoClass totalRowPseudoClass = PseudoClass.getPseudoClass("totalrow");
         // In Vault Tab
-        scs_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_mDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_mPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_fTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
-        scs_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_mDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_mPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_fTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        onShelf_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         // On Crate Tab
         onCrate_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         onCrate_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
@@ -633,6 +659,15 @@ public class MainFormController {
         onCrate_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         onCrate_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
         onCrate_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        // All Stock Tab
+        allStock_mTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_mBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_mDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_mPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_fTachoTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_fBrpTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_fDqcTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
+        allStock_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
     }
 
     @FXML
@@ -641,17 +676,19 @@ public class MainFormController {
 
         WritableImage image;
 
-        if (tabOnShelf.isSelected()) {
-            image = gridOnShelf.snapshot(new SnapshotParameters(), null);
-        } else if (tabInCrate.isSelected()) {
-            image = gridInCrate.snapshot(new SnapshotParameters(), null);
+        if (onShelf_Tab.isSelected()) {
+            image = onShelf_Grid.snapshot(new SnapshotParameters(), null);
+        } else if (onCrate_Tab.isSelected()) {
+            image = onCrate_Grid.snapshot(new SnapshotParameters(), null);
+        } else if (allStock_Tab.isSelected()) {
+            image = allStock_Grid.snapshot(new SnapshotParameters(), null);
         } else {
-            image = gridFirstUci.snapshot(new SnapshotParameters(), null);
+            image = firstUci_Grid.snapshot(new SnapshotParameters(), null);
         }
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("_ddMMyyyy_HHmmss");
         LocalDateTime now = LocalDateTime.now();
-        File file = new File("C:\\temp\\snapshot" + dtf.format(now) + ".png");
+        File file = new File(FileUtils.getUserDirectoryPath() + dtf.format(now) + ".png");
 
         // Send image to file
         try {
@@ -681,16 +718,8 @@ public class MainFormController {
         }
 
         // Delete image file
-        try {
-            file.delete();
-        } catch (Exception ex) {
-            LOGGER.error("Unable to delete image file.");
-            Platform.runLater(() -> {
-                lblPrint.setText("Unable to print image.");
-                ErrorHandler.ErrorMsg("File Delete Error", "The file " + file.getAbsolutePath() + " was not deleted.", "Please be patient while we fix the issue.");
-            });
-        }
-
+        FileUtils.deleteQuietly(file);
+        
         displayMessage();
 
     }
@@ -717,31 +746,28 @@ public class MainFormController {
 
             Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
 
-            // IN VAULT
-            dataMap.put(TableName.INVAULT_TACHO, ListUtils.union(ListUtils.selectRejected(scs_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fTachoTable.getItems(), fieldsToIgnore)));
-
-            dataMap.put(TableName.INVAULT_BRP, ListUtils.union(ListUtils.selectRejected(scs_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fBrpTable.getItems(), fieldsToIgnore)));
-
-            dataMap.put(TableName.INVAULT_POL, ListUtils.union(ListUtils.selectRejected(scs_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fPolTable.getItems(), fieldsToIgnore)));
-
-            dataMap.put(TableName.INVAULT_DQC, ListUtils.union(ListUtils.selectRejected(scs_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(scs_fDqcTable.getItems(), fieldsToIgnore)));
+            // ON SHELF
+            dataMap.put(TableName.ONSHELF_TACHO, ListUtils.union(ListUtils.selectRejected(onShelf_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fTachoTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONSHELF_BRP, ListUtils.union(ListUtils.selectRejected(onShelf_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fBrpTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONSHELF_POL, ListUtils.union(ListUtils.selectRejected(onShelf_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fPolTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONSHELF_DQC, ListUtils.union(ListUtils.selectRejected(onShelf_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fDqcTable.getItems(), fieldsToIgnore)));
 
             // IN CRATE
-            dataMap.put(TableName.INCRATE_TACHO, ListUtils.union(ListUtils.selectRejected(onCrate_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fTachoTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONCRATE_TACHO, ListUtils.union(ListUtils.selectRejected(onCrate_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fTachoTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONCRATE_BRP, ListUtils.union(ListUtils.selectRejected(onCrate_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fBrpTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONCRATE_POL, ListUtils.union(ListUtils.selectRejected(onCrate_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fPolTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONCRATE_DQC, ListUtils.union(ListUtils.selectRejected(onCrate_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fDqcTable.getItems(), fieldsToIgnore)));
 
-            dataMap.put(TableName.INCRATE_BRP, ListUtils.union(ListUtils.selectRejected(onCrate_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fBrpTable.getItems(), fieldsToIgnore)));
-
-            dataMap.put(TableName.INCRATE_POL, ListUtils.union(ListUtils.selectRejected(onCrate_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fPolTable.getItems(), fieldsToIgnore)));
-
-            dataMap.put(TableName.INCRATE_DQC, ListUtils.union(ListUtils.selectRejected(onCrate_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onCrate_fDqcTable.getItems(), fieldsToIgnore)));
+            // ALL STOCK
+            dataMap.put(TableName.ALLSTOCK_TACHO, ListUtils.union(ListUtils.selectRejected(allStock_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(allStock_fTachoTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ALLSTOCK_BRP, ListUtils.union(ListUtils.selectRejected(allStock_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(allStock_fBrpTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ALLSTOCK_POL, ListUtils.union(ListUtils.selectRejected(allStock_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(allStock_fPolTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ALLSTOCK_DQC, ListUtils.union(ListUtils.selectRejected(allStock_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(allStock_fDqcTable.getItems(), fieldsToIgnore)));
 
             // FIRST UCI
             dataMap.put(TableName.UCI_TACHO, ListUtils.union(ListUtils.selectRejected(uci_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fTachoTable.getItems(), fieldsToIgnore)));
-
             dataMap.put(TableName.UCI_BRP, ListUtils.union(ListUtils.selectRejected(uci_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fBrpTable.getItems(), fieldsToIgnore)));
-
             dataMap.put(TableName.UCI_POL, ListUtils.union(ListUtils.selectRejected(uci_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fPolTable.getItems(), fieldsToIgnore)));
-
             dataMap.put(TableName.UCI_DQC, ListUtils.union(ListUtils.selectRejected(uci_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(uci_fDqcTable.getItems(), fieldsToIgnore)));
 
             // SAVE TO EXCEL SPREADSHEET
