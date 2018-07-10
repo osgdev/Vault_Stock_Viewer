@@ -247,7 +247,7 @@ public class Spreadsheet {
 
     /**
      * Sets the print area for each sheet in the workbook and sets each sheet to
-     * print one page wide by one page tall.
+     * print one page wide by multiple pages tall.
      * 
      * @param workbook The workbook on which the printarea will be set.
      */
@@ -255,8 +255,9 @@ public class Spreadsheet {
         workbook.sheetIterator().forEachRemaining(sheet -> {
             int index = sheet.getWorkbook().getSheetIndex(sheet.getSheetName());
             sheet.getWorkbook().setPrintArea(index, "$A$1:$O$14");
-            sheet.getPrintSetup().setFitHeight((short) 1);
+            sheet.setFitToPage(true);
             sheet.getPrintSetup().setFitWidth((short) 1);
+            sheet.getPrintSetup().setFitHeight((short) 0);
         });
     }
 
