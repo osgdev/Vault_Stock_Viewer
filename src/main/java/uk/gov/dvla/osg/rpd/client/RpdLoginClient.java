@@ -25,10 +25,26 @@ public class RpdLoginClient {
 	private RpdErrorResponse errorMsg = new RpdErrorResponse();
     private final String url;
     
-    public RpdLoginClient(NetworkConfig config) {
+    /**
+     * Gets a new instance of the RpdLoginClient
+     * @param config
+     * @return a new instance of the RpdLoginClient.
+     */
+    public static RpdLoginClient getInstance(NetworkConfig config) {
+        return new RpdLoginClient(config);
+    }
+    
+    private RpdLoginClient(NetworkConfig config) {
         this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLoginUrl();
     }
     
+    /**
+     * Contacts RPD and attempts to retrieve a session token using the supplied credentials.
+     * 
+     * @param userName the RPD login name of the user.
+     * @param password the RPD password for the user.
+     * @return a session token if the credentials are valid, for all other conditions an empty optional.
+     */
     public Optional<String> getSessionToken(String userName, String password) {
         try {
         	Response response = RpdRestClient.rpdLogin(url, userName, password);
@@ -72,6 +88,10 @@ public class RpdLoginClient {
         return Optional.empty();
     }
 
+    /**
+     * Retrieves the error response if an empty optional was returned from the getSessionToken method.
+     * @return an error response object.
+     */
     public RpdErrorResponse getErrorResponse() {
         return errorMsg;
     }

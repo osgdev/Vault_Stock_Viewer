@@ -45,14 +45,17 @@ public class JsonUtils {
         return gsonBldr.fromJson(jsonFile, VaultStock.class);
     }
     
-    public static RpdErrorResponse getError(String data) throws JsonIOException, JsonSyntaxException, FileNotFoundException {
+    /**
+     * Deserializes the error response received from RPD
+     *
+     * @param data the JSON string containing the error data
+     * @return the error
+     * @throws JsonIOException the json IO exception
+     * @throws JsonSyntaxException the json syntax exception
+     */
+    public static RpdErrorResponse getError(String data) throws JsonIOException, JsonSyntaxException {
         Gson gsonBldr = new GsonBuilder().registerTypeAdapter(RpdErrorResponse.class, new RpdErrorTypeAdapter()).create();
         return gsonBldr.fromJson(data, RpdErrorResponse.class);
     }
     
-    public static RpdErrorResponse getError() throws JsonIOException, JsonSyntaxException, FileNotFoundException {
-        Gson gsonBldr = new GsonBuilder().registerTypeAdapter(RpdErrorResponse.class, new RpdErrorTypeAdapter()).create();
-        FileReader fr = new FileReader("C:\\Users\\OSG\\Desktop\\BadResponse.json");
-        return gsonBldr.fromJson(fr, RpdErrorResponse.class);
-    }
 }

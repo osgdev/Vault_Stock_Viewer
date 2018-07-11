@@ -11,6 +11,8 @@ public class RpdErrorTypeAdapter<T> implements JsonDeserializer<T> {
     @Override
     public T deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
         try {
+            // the generalErrors node is always an array of one object, so we extract the object and pass it to 
+            // Gson to continue processing.
             JsonObject innerObject = jsonElement.getAsJsonObject()
                                         .get("generalErrors").getAsJsonArray()
                                         .get(0).getAsJsonObject();

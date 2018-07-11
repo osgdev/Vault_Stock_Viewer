@@ -12,29 +12,39 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.*;
 
+/**
+ * A factory for creating AlwaysListTypeAdapter objects.
+ *
+ * @param <E> the element type
+ */
 public final class AlwaysListTypeAdapterFactory<E> implements TypeAdapterFactory {
 
-	// Gson can instantiate it itself
-	private AlwaysListTypeAdapterFactory() {
-	}
+	/**
+	 * Instantiates a new always list type adapter factory.
+	 */
+	private AlwaysListTypeAdapterFactory() {}
 
 	@Override
 	public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> typeToken) {
-		// If it's not a List -- just delegate the job to Gson and let it pick
-		// the best type adapter itself
+		// If it's not a List -- just delegate the job to Gson and let it pick the best type adapter itself
 		if (!List.class.isAssignableFrom(typeToken.getRawType())) {
 			return null;
 		}
 		// Resolving the list parameter type
 		final Type elementType = resolveTypeArgument(typeToken.getType());
 		final TypeAdapter<E> elementTypeAdapter = (TypeAdapter<E>) gson.getAdapter(TypeToken.get(elementType));
-		// Note that the always-list type adapter is made null-safe, so we don't
-		// have to check nulls ourselves
+		// Note that the always-list type adapter is made null-safe, so we don't have to check nulls ourselves
 		final TypeAdapter<T> alwaysListTypeAdapter = (TypeAdapter<T>) new AlwaysListTypeAdapter<>(elementTypeAdapter)
 				.nullSafe();
 		return alwaysListTypeAdapter;
 	}
 
+	/**
+	 * Resolve type argument.
+	 *
+	 * @param type the type
+	 * @return the type
+	 */
 	private static Type resolveTypeArgument(final Type type) {
 		// The given type is not parameterized?
 		if (!(type instanceof ParameterizedType)) {
@@ -45,10 +55,18 @@ public final class AlwaysListTypeAdapterFactory<E> implements TypeAdapterFactory
 		return parameterizedType.getActualTypeArguments()[0];
 	}
 
+	/**
+	 * The Class AlwaysListTypeAdapter.
+	 * @param <E> the element type
+	 */
 	private static final class AlwaysListTypeAdapter<E> extends TypeAdapter<List<E>> {
 
 		private final TypeAdapter<E> elementTypeAdapter;
 
+		/**
+		 * Instantiates a new always list type adapter.
+		 * @param elementTypeAdapter the element type adapter
+		 */
 		private AlwaysListTypeAdapter(final TypeAdapter<E> elementTypeAdapter) {
 			this.elementTypeAdapter = elementTypeAdapter;
 		}
@@ -76,8 +94,7 @@ public final class AlwaysListTypeAdapterFactory<E> implements TypeAdapterFactory
 			case STRING:
 			case NUMBER:
 			case BOOLEAN:
-				// An object or a primitive? Just add the current value to the
-				// result list
+				// An object or a primitive? Just add the current value to the result list
 				list.add(elementTypeAdapter.read(in));
 				break;
 			case NULL:

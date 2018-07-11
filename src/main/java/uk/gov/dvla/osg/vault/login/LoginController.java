@@ -59,7 +59,7 @@ public class LoginController {
 			nameField.setDisable(true);
 			passwordField.setDisable(true);
 
-			final RpdLoginClient login = new RpdLoginClient(NetworkConfig.getInstance());
+			final RpdLoginClient login = RpdLoginClient.getInstance(NetworkConfig.getInstance());
 			// Login performed on background thread to prevent GUI freezing
 			new Thread(() -> {
 				LOGGER.trace("Attempting to login...");

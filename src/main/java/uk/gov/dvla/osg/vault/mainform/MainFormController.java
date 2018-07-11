@@ -277,7 +277,7 @@ public class MainFormController {
                 String file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
                 return JsonUtils.loadStockFile(file);
             } else {
-                VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
+                VaultStockClient vsc = VaultStockClient.getInstance(NetworkConfig.getInstance());
                 Optional<VaultStock> vs = vsc.getStock(Session.getInstance().getToken());
                 if (vs.isPresent()) {
                     return vs.get();

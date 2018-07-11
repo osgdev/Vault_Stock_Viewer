@@ -26,10 +26,25 @@ public class VaultStockClient {
     private RpdErrorResponse errorMessage = new RpdErrorResponse();
     private final String url;
 
-    public VaultStockClient(NetworkConfig config) {
+    /**
+     * Creates a new instance of VaultStockClient
+     * @param config NetworkConfig object holding the vault url information.
+     * @return a new instance of VaultStockClient
+     */
+    public static VaultStockClient getInstance(NetworkConfig config) {
+        return new VaultStockClient(config);
+    }
+    
+    private VaultStockClient(NetworkConfig config) {
         this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getvaultUrl();
     }
 
+    /**
+     * Requests VaultStock data from RPD. If successful the response is converted to a VaultStock object, otherwise the 
+     * error response is saved.
+     * @param token the session token to authenticate with RPD.
+     * @return VaultStock if session token is valid, an empty optional for error conditions.
+     */
     public Optional<VaultStock> getStock(String token) {
         try {
             Response response = RpdRestClient.vaultStock(url, token);
@@ -38,13 +53,12 @@ public class VaultStockClient {
                 LOGGER.trace(data);
                 return Optional.ofNullable(JsonUtils.loadStockFile(data));
             } else {
-                // If RPD an RPD error response is recieved it will be retrieved as XML from the Vault
                 MediaType mediaType = response.getMediaType();
-                if (mediaType.equals(MediaType.TEXT_HTML_TYPE)) {
-                    // RPD provides clear error information, and so is mapped to model
+                // If RPD has been contacted an RPD error response is recieved in XML format
+                if (mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
                     errorMessage = new xmlUtils().getXmlError(data);
                 } else {
-                    // Handle in the outer catch block.
+                    // Unable to contact RPD, handle in the outer catch block.
                     throw new IllegalArgumentException();
                 }
 
@@ -69,6 +83,10 @@ public class VaultStockClient {
         return Optional.empty();
     }
 
+    /**
+     * Retrieves the error response if an empty optional was returned from the getStock method.
+     * @return an error response object.
+     */
     public RpdErrorResponse getErrorResponse() {
         return errorMessage;
     }
