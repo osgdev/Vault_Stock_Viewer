@@ -738,7 +738,7 @@ public class MainFormController {
     @FXML
     private void save() {
         lblPrint.setText("Please wait...");
-
+        
         new Thread(() -> {
 
             // BUILD DATA MAP
@@ -773,9 +773,13 @@ public class MainFormController {
             // SAVE TO EXCEL SPREADSHEET
             Spreadsheet s = new Spreadsheet(dataMap);
             try {
-                s.save();
+                boolean saved = s.save();
                 Platform.runLater(() -> {
+                    if (saved) {
                     lblPrint.setText("Saved as Excel spreadsheet!");
+                    } else {
+                        lblPrint.setText("Save cancelled!");
+                    }
                 });
             } catch (IOException ex) {
                 LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
@@ -798,7 +802,7 @@ public class MainFormController {
                 displayMessage();
             });
 
-        }).start();
+        }).start();;        
     }
 
     /**

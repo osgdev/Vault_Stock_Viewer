@@ -2,6 +2,8 @@ package uk.gov.dvla.osg.vault.mainform;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -10,6 +12,8 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.*;
 
+import javafx.application.Platform;
+import javafx.stage.FileChooser;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.enums.Style;
 import uk.gov.dvla.osg.vault.enums.TableName;
@@ -42,7 +46,7 @@ public class Spreadsheet {
      * 
      * @throws IOException
      */
-    void save() throws IOException, RuntimeException {
+    boolean save() throws IOException, RuntimeException {
         // Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
         createWorkbookStyles(workbook);
@@ -76,7 +80,7 @@ public class Spreadsheet {
         addData(TableName.ALLSTOCK_DQC, sheet_ASB, 12);
         addTotalRow(sheet_ASB);
         setColumnWidths(sheet_ASB);
-        
+
         // First UCI sheet
         XSSFSheet sheet_UCI = workbook.createSheet("UCI's");
         createRows(sheet_UCI);
@@ -88,8 +92,7 @@ public class Spreadsheet {
 
         setPrintArea(workbook);
 
-        // Write the workbook in file system
-        saveWorkbook(workbook);
+        return saveWorkbook(workbook);
     }
 
     /**
@@ -270,7 +273,7 @@ public class Spreadsheet {
 
         XSSFFont bold = workbook.createFont();
         bold.setBold(true);
-        
+
         // Base common to all three styles
         XSSFCellStyle baseStyle = workbook.createCellStyle();
 
@@ -289,43 +292,43 @@ public class Spreadsheet {
         even_row_type.cloneStyleFrom(baseStyle);
         even_row_type.setFillForegroundColor(LIGHT_BLUE);
         styles.put(Style.EVEN_ROW_TYPE, even_row_type);
-        
+
         XSSFCellStyle even_row_site = workbook.createCellStyle();
         even_row_site.cloneStyleFrom(even_row_type);
         even_row_site.setAlignment(HorizontalAlignment.CENTER);
         styles.put(Style.EVEN_ROW_SITE, even_row_site);
-        
+
         XSSFCellStyle even_row_vol = workbook.createCellStyle();
         even_row_vol.cloneStyleFrom(even_row_type);
         even_row_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
         styles.put(Style.EVEN_ROW_VOL, even_row_vol);
-        
+
         XSSFCellStyle even_total_type = workbook.createCellStyle();
         even_total_type.cloneStyleFrom(even_row_type);
         even_total_type.setFont(bold);
         styles.put(Style.EVEN_TOTAL_TYPE, even_total_type);
-        
+
         XSSFCellStyle even_total_site = workbook.createCellStyle();
         even_total_site.cloneStyleFrom(even_row_site);
         even_total_site.setFont(bold);
         styles.put(Style.EVEN_TOTAL_SITE, even_total_site);
-        
+
         XSSFCellStyle even_total_vol = workbook.createCellStyle();
         even_total_vol.cloneStyleFrom(even_row_vol);
         even_total_vol.setFont(bold);
         styles.put(Style.EVEN_TOTAL_VOL, even_total_vol);
-        
+
         // ODD ROW
         XSSFCellStyle odd_row_type = workbook.createCellStyle();
         odd_row_type.cloneStyleFrom(baseStyle);
         odd_row_type.setFillForegroundColor(WHITE);
         styles.put(Style.ODD_ROW_TYPE, odd_row_type);
-        
+
         XSSFCellStyle odd_row_site = workbook.createCellStyle();
         odd_row_site.cloneStyleFrom(odd_row_type);
         odd_row_site.setAlignment(HorizontalAlignment.CENTER);
         styles.put(Style.ODD_ROW_SITE, odd_row_site);
-        
+
         XSSFCellStyle odd_row_vol = workbook.createCellStyle();
         odd_row_vol.cloneStyleFrom(odd_row_type);
         odd_row_vol.setDataFormat(HSSFDataFormat.getBuiltinFormat("#,##0"));
@@ -335,17 +338,17 @@ public class Spreadsheet {
         odd_total_type.cloneStyleFrom(odd_row_type);
         odd_total_type.setFont(bold);
         styles.put(Style.ODD_TOTAL_TYPE, odd_total_type);
-        
+
         XSSFCellStyle odd_total_site = workbook.createCellStyle();
         odd_total_site.cloneStyleFrom(odd_row_site);
         odd_total_site.setFont(bold);
         styles.put(Style.ODD_TOTAL_SITE, odd_total_site);
-        
+
         XSSFCellStyle odd_total_vol = workbook.createCellStyle();
         odd_total_vol.cloneStyleFrom(odd_row_vol);
         odd_total_vol.setFont(bold);
         styles.put(Style.ODD_TOTAL_VOL, odd_total_vol);
-        
+
         // HEADER ROW
         XSSFFont font = workbook.createFont();
         font.setColor(WHITE);
@@ -360,7 +363,7 @@ public class Spreadsheet {
         header_row_site.cloneStyleFrom(header_row_type);
         header_row_site.setAlignment(HorizontalAlignment.CENTER);
         styles.put(Style.HEADER_ROW_SITE, header_row_site);
-        
+
         XSSFCellStyle header_row_vol = workbook.createCellStyle();
         header_row_vol.cloneStyleFrom(header_row_type);
         header_row_vol.setAlignment(HorizontalAlignment.RIGHT);
@@ -373,15 +376,42 @@ public class Spreadsheet {
      * @param workbook The workbook to save.
      * @throws FileNotFoundException if Workbook is currently open.
      * @throws IOException if unable to save Workbook to file system.
+     * @throws InterruptedException
      */
-    private void saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException {
-        try (FileOutputStream out = new FileOutputStream(new File("cardManagement.xlsx"))) {
-            workbook.write(out);
-            workbook.close();
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (IOException ex) {
-            throw ex;
+    private boolean saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        AtomicBoolean saved = new AtomicBoolean(false);
+        Platform.runLater(() -> {
+            try {
+                // Write the workbook in file system
+                FileChooser fileChooser = new FileChooser();
+                // Set extension filter
+                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("excel files (*.xlsx)", "*.xlsx");
+                fileChooser.getExtensionFilters().add(extFilter);
+                // Show save file dialog
+                File file = fileChooser.showSaveDialog(null);
+
+                if (file != null) {
+                    try (FileOutputStream out = new FileOutputStream(file)) {
+                        workbook.write(out);
+                        workbook.close();
+                        saved.set(true);
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            } finally {
+                latch.countDown();
+            }
+        });
+        
+        try {
+            latch.await();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         }
+        return saved.get();
     }
 }
