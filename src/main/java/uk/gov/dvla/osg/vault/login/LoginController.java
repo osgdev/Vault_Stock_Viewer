@@ -30,14 +30,10 @@ public class LoginController {
 
 	static final Logger LOGGER = LogManager.getLogger();
     
-	@FXML
-	private TextField nameField;
-	@FXML
-	public PasswordField passwordField;
-	@FXML
-	public Button btnLogin;
-	@FXML
-	public Label lblMessage;
+	@FXML private TextField nameField;
+	@FXML public PasswordField passwordField;
+	@FXML public Button btnLogin;
+	@FXML public Label lblMessage;
 	
 	private Optional<String> token = Optional.empty();
 	
@@ -119,8 +115,7 @@ public class LoginController {
 	 * Method responds to keypress events on the user and password fields. Login
 	 * button is only enabled when both fields contain text.
 	 */
-	@FXML
-	private void txtChanged() {
+	 @FXML private void txtChanged() {
 		if (nameField.getText().trim().equals("") || passwordField.getText().trim().equals("")) {
 			btnLogin.setDisable(true);
 		} else {

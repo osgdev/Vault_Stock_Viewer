@@ -1,5 +1,8 @@
 package uk.gov.dvla.osg.vault.enums;
 
+/**
+ * Format styles used when building the spreadsheet.
+ */
 public enum Style {
 
     EVEN_ROW_TYPE,

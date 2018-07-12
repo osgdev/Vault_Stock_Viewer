@@ -40,16 +40,14 @@ public class NetworkConfig {
        }
    }
    /*****************************************************************************************/
-    
-    // absolute filepath for the vault_stock.config file
 
-    private String protocol = "";
-    private String host = "";
-    private String port = "";
     private String vaultUrl = "";
     private String loginUrl = "";
     private String logoutUrl = "";
   
+    /**
+     * Instantiates a new network config from the fields in the property file.
+     */
     private NetworkConfig() {
         
         PropertyLoader loader = null;
@@ -61,39 +59,44 @@ public class NetworkConfig {
         }
         
         try {
-            protocol = loader.getProperty("protocol");
-            host = loader.getProperty("host");
-            port = loader.getProperty("port");
-            loginUrl = loader.getProperty("loginUrl");
-            logoutUrl = loader.getProperty("logoutUrl");
-            vaultUrl = loader.getProperty("vaultUrl");
+            String protocol = loader.getProperty("protocol");
+            String host = loader.getProperty("host");
+            String port = loader.getProperty("port");
+            String urlBase = protocol + host + ":" + port;
+            loginUrl = urlBase + loader.getProperty("loginUrl");
+            logoutUrl = urlBase + loader.getProperty("logoutUrl");
+            vaultUrl = urlBase + loader.getProperty("vaultUrl");
         } catch (RuntimeException ex) {
             LOGGER.fatal(ex.getMessage());
             System.exit(1);
         }
 
     }
-    
-    public String getProtocol() {
-        return protocol;
-    }
 
-    public String getHost() {
-        return host;
-    }
     
-    public String getPort() {
-        return port;
-    }
-    
+    /**
+     * Gets the RPD vault url.
+     *
+     * @return the vault url
+     */
     public String getvaultUrl() {
         return vaultUrl;
     }
     
+    /**
+     * Gets the login url.
+     *
+     * @return the login url
+     */
     public String getLoginUrl() {
         return loginUrl;
     }
     
+    /**
+     * Gets the logout url.
+     *
+     * @return the logout url
+     */
     public String getLogoutUrl() {
         return logoutUrl;
     }

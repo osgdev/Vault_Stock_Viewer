@@ -36,7 +36,7 @@ public class VaultStockClient {
     }
     
     private VaultStockClient(NetworkConfig config) {
-        this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getvaultUrl();
+        this.url = config.getvaultUrl();
     }
 
     /**

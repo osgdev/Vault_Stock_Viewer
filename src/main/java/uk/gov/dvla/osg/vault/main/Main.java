@@ -32,14 +32,16 @@ public class Main extends Application {
             LOGGER.fatal("Incorrect number of arguments supplied!");
             System.exit(1);
         }
+        
         String configFile = args[0];
         boolean propsFileExists = new File(configFile).exists();
         if (!propsFileExists) {
             LOGGER.fatal("Properties File '{}' doesn't exist", configFile);
             System.exit(1);
         }
+        
         NetworkConfig.init(configFile);
-        NetworkConfig.getInstance();
+        
         launch(args);
     }
 
