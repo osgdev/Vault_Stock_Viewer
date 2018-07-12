@@ -420,92 +420,92 @@ public class MainFormController {
     }
 
     private void setData_InVault_BothSites() {
-        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.TACHO, Site.M));
+        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.TACHO, Site.M));
         onShelf_Grid.setRowSpan(onShelf_mTachoTable, 1);
 
-        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.BID, Site.M));
+        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.BID, Site.M));
         onShelf_Grid.setRowSpan(onShelf_mBrpTable, 1);
 
-        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.POL, Site.M));
+        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.POL, Site.M));
         onShelf_Grid.setRowSpan(onShelf_mPolTable, 1);
 
-        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.DQC, Site.M));
+        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.DQC, Site.M));
         onShelf_Grid.setRowSpan(onShelf_mDqcTable, 1);
 
-        onShelf_fTachoTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.TACHO, Site.F));
+        onShelf_fTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.TACHO, Site.F));
         onShelf_fTachoTable.setVisible(true);
 
-        onShelf_fBrpTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.BID, Site.F));
+        onShelf_fBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.BID, Site.F));
         onShelf_fBrpTable.setVisible(true);
 
-        onShelf_fPolTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.POL, Site.F));
+        onShelf_fPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.POL, Site.F));
         onShelf_fPolTable.setVisible(true);
 
-        onShelf_fDqcTable.setItems(dataHandler.getOnShelfDataForBothSites(CardClass.DQC, Site.F));
+        onShelf_fDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.DQC, Site.F));
         onShelf_fDqcTable.setVisible(true);
     }
 
     private void setData_OnCrate_BothSites() {
-        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.M));
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.TACHO, Site.M));
         onCrate_Grid.setRowSpan(onCrate_mTachoTable, 1);
 
-        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.M));
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.BID, Site.M));
         onCrate_Grid.setRowSpan(onCrate_mBrpTable, 1);
 
-        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.M));
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.POL, Site.M));
         onCrate_Grid.setRowSpan(onCrate_mPolTable, 1);
 
-        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.M));
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.DQC, Site.M));
         onCrate_Grid.setRowSpan(onCrate_mDqcTable, 1);
 
-        onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.TACHO, Site.F));
+        onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.TACHO, Site.F));
         onCrate_fTachoTable.setVisible(true);
 
-        onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.BID, Site.F));
+        onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.BID, Site.F));
         onCrate_fBrpTable.setVisible(true);
 
-        onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.POL, Site.F));
+        onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.POL, Site.F));
         onCrate_fPolTable.setVisible(true);
 
-        onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForBothSites(CardClass.DQC, Site.F));
+        onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.DQC, Site.F));
         onCrate_fDqcTable.setVisible(true);
     }
 
     private void setData_AllStock_BothSites() {
-        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.TACHO, Site.M));
+        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.TACHO, Site.M));
         allStock_Grid.setRowSpan(allStock_mTachoTable, 1);
 
-        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.BID, Site.M));
+        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.BID, Site.M));
         allStock_Grid.setRowSpan(allStock_mBrpTable, 1);
 
-        allStock_mPolTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.POL, Site.M));
+        allStock_mPolTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.POL, Site.M));
         allStock_Grid.setRowSpan(allStock_mPolTable, 1);
 
-        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.DQC, Site.M));
+        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.DQC, Site.M));
         allStock_Grid.setRowSpan(allStock_mDqcTable, 1);
 
-        allStock_fTachoTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.TACHO, Site.F));
+        allStock_fTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.TACHO, Site.F));
         allStock_fTachoTable.setVisible(true);
 
-        allStock_fBrpTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.BID, Site.F));
+        allStock_fBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.BID, Site.F));
         allStock_fBrpTable.setVisible(true);
 
-        allStock_fPolTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.POL, Site.F));
+        allStock_fPolTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.POL, Site.F));
         allStock_fPolTable.setVisible(true);
 
-        allStock_fDqcTable.setItems(dataHandler.getAllStockDataForBothSites(CardClass.DQC, Site.F));
+        allStock_fDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.DQC, Site.F));
         allStock_fDqcTable.setVisible(true);
     }
     
     private void setData_UCI() {
-        uci_mTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.M));
-        uci_mBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.M));
-        uci_mPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.M));
-        uci_mDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.M));
-        uci_fTachoTable.setItems(dataHandler.getUciData(CardClass.TACHO, Site.F));
-        uci_fBrpTable.setItems(dataHandler.getUciData(CardClass.BID, Site.F));
-        uci_fPolTable.setItems(dataHandler.getUciData(CardClass.POL, Site.F));
-        uci_fDqcTable.setItems(dataHandler.getUciData(CardClass.DQC, Site.F));
+        uci_mTachoTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.TACHO, Site.M));
+        uci_mBrpTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.BID, Site.M));
+        uci_mPolTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.POL, Site.M));
+        uci_mDqcTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.DQC, Site.M));
+        uci_fTachoTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.TACHO, Site.F));
+        uci_fBrpTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.BID, Site.F));
+        uci_fPolTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.POL, Site.F));
+        uci_fDqcTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.DQC, Site.F));
     }
 
     private void setupTableData_Combined() {

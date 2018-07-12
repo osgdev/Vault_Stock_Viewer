@@ -43,7 +43,7 @@ public class LogOut {
 		if (result.isPresent() && result.get() == ButtonType.OK) {
 
 			if (!DEBUG_MODE) {
-		        String url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLogoutUrl();
+		        String url = config.getLogoutUrl();
     			try {
     				Response response = RpdRestClient.rpdLogOut(url, Session.getInstance().getToken());
     				if (response.getStatus() != 200) {

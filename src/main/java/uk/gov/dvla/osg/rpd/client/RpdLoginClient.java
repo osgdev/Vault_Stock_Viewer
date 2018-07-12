@@ -34,8 +34,13 @@ public class RpdLoginClient {
         return new RpdLoginClient(config);
     }
     
+    /**
+     * Instantiates a new rpd login client.
+     *
+     * @param config the config
+     */
     private RpdLoginClient(NetworkConfig config) {
-        this.url = config.getProtocol() + config.getHost() + ":" + config.getPort() + config.getLoginUrl();
+        this.url = config.getLoginUrl();
     }
     
     /**
