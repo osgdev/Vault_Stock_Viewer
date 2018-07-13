@@ -8,6 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+/**
+ * The Class NetworkConfig holds the RPD Rest API URL's.
+ * It is loaded from a network configuration properties file which is stored
+ * in the local file system. 
+ */
 public class NetworkConfig {
     
     private static final Logger LOGGER = LogManager.getLogger();
@@ -21,13 +26,26 @@ public class NetworkConfig {
        private static final NetworkConfig INSTANCE = new NetworkConfig();
    }
 
-   public static NetworkConfig getInstance() {
+
+   /**
+    * Gets the single instance of NetworkConfig.
+    *
+    * @return single instance of NetworkConfig
+    * @throws RuntimeException if the method is called before initialising with the network configuration file
+    */
+   public static NetworkConfig getInstance() throws RuntimeException {
        if (StringUtils.isBlank(filename)) {
            throw new RuntimeException("Application Configuration not initialised before use");
        }
        return SingletonHelper.INSTANCE;
    }
 
+   /**
+    * Initialises the NetworkConfig with the network configuration file.
+    *
+    * @param file the network configuration file
+    * @throws RuntimeException if the configuration file does not exist or if NetworkConfig has already been initialised.
+    */
    public static void init(String file) throws RuntimeException {
        if (StringUtils.isBlank(filename)) {
            if (new File(file).isFile()) {
@@ -50,6 +68,7 @@ public class NetworkConfig {
      */
     private NetworkConfig() {
         
+        // PropertyLoader loads the properties from the configuration file and validates each entry
         PropertyLoader loader = null;
         try {
             loader = new PropertyLoader(filename);
@@ -67,6 +86,7 @@ public class NetworkConfig {
             logoutUrl = urlBase + loader.getProperty("logoutUrl");
             vaultUrl = urlBase + loader.getProperty("vaultUrl");
         } catch (RuntimeException ex) {
+            // Property value is missing from the file
             LOGGER.fatal(ex.getMessage());
             System.exit(1);
         }

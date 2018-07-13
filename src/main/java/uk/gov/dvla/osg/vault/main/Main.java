@@ -28,11 +28,13 @@ public class Main extends Application {
     
     public static void main(String[] args) {
         
+        // Verify correct number of args
         if (args.length != 1) {
             LOGGER.fatal("Incorrect number of arguments supplied!");
             System.exit(1);
         }
         
+        // Check config file path is correct
         String configFile = args[0];
         boolean propsFileExists = new File(configFile).exists();
         if (!propsFileExists) {
@@ -40,8 +42,10 @@ public class Main extends Application {
             System.exit(1);
         }
         
+        // Initialise the network configuration from the file
         NetworkConfig.init(configFile);
         
+        // Launch the GUI
         launch(args);
     }
 

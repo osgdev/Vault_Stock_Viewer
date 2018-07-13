@@ -4,7 +4,11 @@ import javafx.css.PseudoClass;
 import javafx.scene.control.TableRow;
 import uk.gov.dvla.osg.vault.data.CardData;
 
-public final class HighlightTotalRow extends TableRow<CardData> {
+/**
+ * The Class HighlightTotalRow assigns the "totalRow" CSS Class to the final row in a table. 
+ * This enables us to control the CSS styling for this individual row.
+ */
+final class HighlightTotalRow extends TableRow<CardData> {
     private final PseudoClass totalRowPseudoClass;
 
     HighlightTotalRow(PseudoClass totalRowPseudoClass) {

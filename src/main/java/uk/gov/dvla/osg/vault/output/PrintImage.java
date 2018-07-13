@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.mainform;
+package uk.gov.dvla.osg.vault.output;
 
 import java.awt.print.PrinterAbortException;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package uk.gov.dvla.osg.vault.mainform;
+package uk.gov.dvla.osg.vault.output;
 
 import java.io.*;
 import java.util.*;
@@ -36,7 +36,7 @@ public class Spreadsheet {
      * 
      * @param dataMap The data to be written into the spreadsheet.
      */
-    Spreadsheet(Map<TableName, List<CardData>> dataMap) {
+    public Spreadsheet(Map<TableName, List<CardData>> dataMap) {
         this.dataMap = dataMap;
     }
 
@@ -46,7 +46,7 @@ public class Spreadsheet {
      * 
      * @throws IOException
      */
-    boolean save() throws IOException, RuntimeException {
+    public boolean save() throws IOException, RuntimeException {
         // Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
         createWorkbookStyles(workbook);
@@ -372,15 +372,18 @@ public class Spreadsheet {
 
     /**
      * Save the workbook to the file system.
-     * 
+     *
      * @param workbook The workbook to save.
+     * @return true, if successful, false if user cancelled the save operation.
      * @throws FileNotFoundException if Workbook is currently open.
      * @throws IOException if unable to save Workbook to file system.
-     * @throws InterruptedException
      */
     private boolean saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException {
+        // We need to wait for the "Save As" dialog to close before exiting the method
         final CountDownLatch latch = new CountDownLatch(1);
+        // Used to update the message label according to whether the data was saved or user cancelled
         AtomicBoolean saved = new AtomicBoolean(false);
+        
         Platform.runLater(() -> {
             try {
                 // Write the workbook in file system
@@ -392,6 +395,7 @@ public class Spreadsheet {
                 File file = fileChooser.showSaveDialog(null);
 
                 if (file != null) {
+                    // Write file to selected location
                     try (FileOutputStream out = new FileOutputStream(file)) {
                         workbook.write(out);
                         workbook.close();
@@ -407,6 +411,7 @@ public class Spreadsheet {
             }
         });
         
+        // Wait for dialog to close before exiting method.
         try {
             latch.await();
         } catch (InterruptedException ex) {

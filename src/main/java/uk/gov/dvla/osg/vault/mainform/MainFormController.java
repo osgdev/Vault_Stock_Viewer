@@ -1,5 +1,8 @@
 package uk.gov.dvla.osg.vault.mainform;
 
+import static uk.gov.dvla.osg.vault.enums.CardClass.*;
+import static uk.gov.dvla.osg.vault.enums.Site.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,12 +47,12 @@ import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
 import uk.gov.dvla.osg.vault.data.CardData;
 import uk.gov.dvla.osg.vault.data.VaultStock;
-import uk.gov.dvla.osg.vault.enums.CardClass;
-import uk.gov.dvla.osg.vault.enums.Site;
 import uk.gov.dvla.osg.vault.enums.TableName;
 import uk.gov.dvla.osg.vault.error.ErrorHandler;
 import uk.gov.dvla.osg.vault.login.LogOut;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
+import uk.gov.dvla.osg.vault.output.PrintImage;
+import uk.gov.dvla.osg.vault.output.Spreadsheet;
 import uk.gov.dvla.osg.vault.session.Session;
 
 public class MainFormController {
@@ -222,6 +225,9 @@ public class MainFormController {
     private VaultStock vaultStock;
     private DataHandler dataHandler;
 
+    /**
+     * Retrieves vault stock data from RPD and initializes tables.
+     */
     @FXML
     private void initialize() {
         // Add image to button
@@ -229,28 +235,42 @@ public class MainFormController {
         setRefreshButtonImage();
         setExcelButtonImage();
         assignRefreshBtnAction();
+        // Load values into the two combo boxes
         loadChoiceBoxes();
+        // Set up the tables so they know which values to load
         setCellValueFactories();
         highlightTotals();
         // Download data from vault and load into tables
         refreshBtn.fire();
     }
 
+    /**
+     * Sets the print button image.
+     */
     private void setPrintButtonImage() {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/print.png"));
         btnPrint.setGraphic(new ImageView(buttonImage));
     }
 
+    /**
+     * Sets the refresh button image.
+     */
     private void setRefreshButtonImage() {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/refresh.png"));
         refreshBtn.setGraphic(new ImageView(buttonImage));
     }
 
+    /**
+     * Sets the excel button image.
+     */
     private void setExcelButtonImage() {
         Image buttonImage = new Image(getClass().getResourceAsStream("/Images/excel.png"));
         btnExcel.setGraphic(new ImageView(buttonImage));
     }
 
+    /**
+     * Sets the data handler to contain either the "Production" or "Test" environment data.
+     */
     private void checkSite() {
         if (vaultStock != null) {
             if (environmentChoice.getSelectionModel().getSelectedItem().equals("TEST")) {
@@ -261,6 +281,9 @@ public class MainFormController {
         }
     }
 
+    /**
+     * Loads data from the dataHandler into tables.
+     */
     private void setupTableData() {
         if (siteChoice.getSelectionModel().getSelectedItem().equals("COMBINED")) {
             setupTableData_Combined();
@@ -269,6 +292,12 @@ public class MainFormController {
         }
     }
 
+    /**
+     * Contacts the RPD Vault Api, downloads the data and returns it as a VaultStock object.
+     * An error is shown if RPD cannot be contacted or if the user's session has timed-out through inactivity.
+     *
+     * @return the vault stock
+     */
     private VaultStock loadJsonData() {
         try {
             if (DEBUG_MODE) {
@@ -284,21 +313,20 @@ public class MainFormController {
                 } else {
                     RpdErrorResponse error = vsc.getErrorResponse();
                     LOGGER.error(error.toString());
-                    Platform.runLater(() -> {
-                        ErrorHandler.ErrorMsg(error.getCode(), error.getMessage(), error.getAction());
-                    });
+                    Platform.runLater(() -> ErrorHandler.ErrorMsg(error.getCode(), error.getMessage(), error.getAction()));
                 }
             }
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException ex) {
             LOGGER.fatal(ex.getMessage());
             // Display error msg dialog box to user
-            Platform.runLater(() -> {
-                ErrorHandler.ErrorMsg("An error occured while connecting to the vault.", ex.getMessage());
-            });
+            Platform.runLater(() -> ErrorHandler.ErrorMsg("An error occured while connecting to the vault.", ex.getMessage()));
         }
         return null;
     }
 
+    /**
+     * Loads both choice boxes and assigns listeners.
+     */
     private void loadChoiceBoxes() {
         ObservableList<String> environmentList = FXCollections.observableArrayList("PRODUCTION", "TEST");
         ObservableList<String> siteList = FXCollections.observableArrayList("BOTH", "COMBINED");
@@ -321,8 +349,12 @@ public class MainFormController {
 
     }
 
+    /**
+     * DataEntry objects are passed into the table. Cell value factories tell the table, which
+     * fields from DataEntry will be loaded into each column.
+     */
     private void setCellValueFactories() {
-
+        // The names of fields in the DataEntry object.
         PropertyValueFactory<CardData, String> propValCardType = new PropertyValueFactory<>("cardType");
         PropertyValueFactory<CardData, String> propValCardVol = new PropertyValueFactory<>("volume");
         PropertyValueFactory<CardData, String> propValCardUci = new PropertyValueFactory<>("uci");
@@ -400,6 +432,10 @@ public class MainFormController {
         uci_fDqcCol_uci.setCellValueFactory(propValCardUci);
     }
 
+    /**
+     * Sets the grids to display both rows of tables and then calls
+     * methods that load the data into each tab.
+     */
     private void setupTableData_BothSites() {
         onShelf_lblMorriston.setText("MORRISTON");
         onShelf_lblFforestfach.setText("FFORESTFACH");
@@ -419,95 +455,114 @@ public class MainFormController {
         setData_UCI();
     }
 
+    /**
+     * Sets the in vault data for both sites.
+     * Loads the data from the dataHandler into each table and adjusts the tables so 
+     * they span 1 row each and all are made visible.
+     */
     private void setData_InVault_BothSites() {
-        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.TACHO, Site.M));
+        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(TACHO, M));
         onShelf_Grid.setRowSpan(onShelf_mTachoTable, 1);
 
-        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.BID, Site.M));
+        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(BID, M));
         onShelf_Grid.setRowSpan(onShelf_mBrpTable, 1);
 
-        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.POL, Site.M));
+        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(POL, M));
         onShelf_Grid.setRowSpan(onShelf_mPolTable, 1);
 
-        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.DQC, Site.M));
+        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(DQC, M));
         onShelf_Grid.setRowSpan(onShelf_mDqcTable, 1);
 
-        onShelf_fTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.TACHO, Site.F));
+        onShelf_fTachoTable.setItems(dataHandler.getOnShelfDataForSingleSite(TACHO, F));
         onShelf_fTachoTable.setVisible(true);
 
-        onShelf_fBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.BID, Site.F));
+        onShelf_fBrpTable.setItems(dataHandler.getOnShelfDataForSingleSite(BID, F));
         onShelf_fBrpTable.setVisible(true);
 
-        onShelf_fPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.POL, Site.F));
+        onShelf_fPolTable.setItems(dataHandler.getOnShelfDataForSingleSite(POL, F));
         onShelf_fPolTable.setVisible(true);
 
-        onShelf_fDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(CardClass.DQC, Site.F));
+        onShelf_fDqcTable.setItems(dataHandler.getOnShelfDataForSingleSite(DQC, F));
         onShelf_fDqcTable.setVisible(true);
     }
 
+    /**
+     * Sets the data on crate both sites.
+     */
     private void setData_OnCrate_BothSites() {
-        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.TACHO, Site.M));
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(TACHO, M));
         onCrate_Grid.setRowSpan(onCrate_mTachoTable, 1);
 
-        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.BID, Site.M));
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(BID, M));
         onCrate_Grid.setRowSpan(onCrate_mBrpTable, 1);
 
-        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.POL, Site.M));
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(POL, M));
         onCrate_Grid.setRowSpan(onCrate_mPolTable, 1);
 
-        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.DQC, Site.M));
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(DQC, M));
         onCrate_Grid.setRowSpan(onCrate_mDqcTable, 1);
 
-        onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.TACHO, Site.F));
+        onCrate_fTachoTable.setItems(dataHandler.getOnCrateDataForSingleSite(TACHO, F));
         onCrate_fTachoTable.setVisible(true);
 
-        onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.BID, Site.F));
+        onCrate_fBrpTable.setItems(dataHandler.getOnCrateDataForSingleSite(BID, F));
         onCrate_fBrpTable.setVisible(true);
 
-        onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.POL, Site.F));
+        onCrate_fPolTable.setItems(dataHandler.getOnCrateDataForSingleSite(POL, F));
         onCrate_fPolTable.setVisible(true);
 
-        onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(CardClass.DQC, Site.F));
+        onCrate_fDqcTable.setItems(dataHandler.getOnCrateDataForSingleSite(DQC, F));
         onCrate_fDqcTable.setVisible(true);
     }
 
+    /**
+     * Sets the data all stock both sites.
+     */
     private void setData_AllStock_BothSites() {
-        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.TACHO, Site.M));
+        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(TACHO, M));
         allStock_Grid.setRowSpan(allStock_mTachoTable, 1);
 
-        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.BID, Site.M));
+        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(BID, M));
         allStock_Grid.setRowSpan(allStock_mBrpTable, 1);
 
-        allStock_mPolTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.POL, Site.M));
+        allStock_mPolTable.setItems(dataHandler.getAllStockDataForSingleSite(POL, M));
         allStock_Grid.setRowSpan(allStock_mPolTable, 1);
 
-        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.DQC, Site.M));
+        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(DQC, M));
         allStock_Grid.setRowSpan(allStock_mDqcTable, 1);
 
-        allStock_fTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.TACHO, Site.F));
+        allStock_fTachoTable.setItems(dataHandler.getAllStockDataForSingleSite(TACHO, F));
         allStock_fTachoTable.setVisible(true);
 
-        allStock_fBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.BID, Site.F));
+        allStock_fBrpTable.setItems(dataHandler.getAllStockDataForSingleSite(BID, F));
         allStock_fBrpTable.setVisible(true);
 
-        allStock_fPolTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.POL, Site.F));
+        allStock_fPolTable.setItems(dataHandler.getAllStockDataForSingleSite(POL, F));
         allStock_fPolTable.setVisible(true);
 
-        allStock_fDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(CardClass.DQC, Site.F));
+        allStock_fDqcTable.setItems(dataHandler.getAllStockDataForSingleSite(DQC, F));
         allStock_fDqcTable.setVisible(true);
     }
     
+    /**
+     * Sets the UCI data. 
+     * This data remains the same for the "Both Sites" and "Combined" modes.
+     */
     private void setData_UCI() {
-        uci_mTachoTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.TACHO, Site.M));
-        uci_mBrpTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.BID, Site.M));
-        uci_mPolTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.POL, Site.M));
-        uci_mDqcTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.DQC, Site.M));
-        uci_fTachoTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.TACHO, Site.F));
-        uci_fBrpTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.BID, Site.F));
-        uci_fPolTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.POL, Site.F));
-        uci_fDqcTable.setItems(dataHandler.getUciDataForSingleSite(CardClass.DQC, Site.F));
+        uci_mTachoTable.setItems(dataHandler.getUciDataForSingleSite(TACHO, M));
+        uci_mBrpTable.setItems(dataHandler.getUciDataForSingleSite(BID, M));
+        uci_mPolTable.setItems(dataHandler.getUciDataForSingleSite(POL, M));
+        uci_mDqcTable.setItems(dataHandler.getUciDataForSingleSite(DQC, M));
+        uci_fTachoTable.setItems(dataHandler.getUciDataForSingleSite(TACHO, F));
+        uci_fBrpTable.setItems(dataHandler.getUciDataForSingleSite(BID, F));
+        uci_fPolTable.setItems(dataHandler.getUciDataForSingleSite(POL, F));
+        uci_fDqcTable.setItems(dataHandler.getUciDataForSingleSite(DQC, F));
     }
 
+    /**
+     * Setup table data for combining volumes for both sites.
+     * The top (Morriston) label is expanded across both rows so that it sits in the center of the grid.
+     */
     private void setupTableData_Combined() {
         onShelf_lblMorriston.setText("MORRISTON\n&\nFFORESTFACH");
         onShelf_lblFforestfach.setText("");
@@ -527,17 +582,22 @@ public class MainFormController {
         setData_UCI();
     }
 
+    /**
+     * Sets the data on shelf combined.
+     * Tables in the top (Morriston) row are expanded across both rows so they sit in the center of the grid.
+     * The bottom (Fforestfach) row is hidden by setting the visibility to false for each Fforestfach table.
+     */
     private void setData_OnShelf_Combined() {
-        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.TACHO));
+        onShelf_mTachoTable.setItems(dataHandler.getOnShelfDataForCombined(TACHO));
         onShelf_Grid.setRowSpan(onShelf_mTachoTable, 2);
 
-        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.BID));
+        onShelf_mBrpTable.setItems(dataHandler.getOnShelfDataForCombined(BID));
         onShelf_Grid.setRowSpan(onShelf_mBrpTable, 2);
 
-        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.POL));
+        onShelf_mPolTable.setItems(dataHandler.getOnShelfDataForCombined(POL));
         onShelf_Grid.setRowSpan(onShelf_mPolTable, 2);
 
-        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForCombined(CardClass.DQC));
+        onShelf_mDqcTable.setItems(dataHandler.getOnShelfDataForCombined(DQC));
         onShelf_Grid.setRowSpan(onShelf_mDqcTable, 2);
 
         onShelf_fTachoTable.setVisible(false);
@@ -546,17 +606,20 @@ public class MainFormController {
         onShelf_fDqcTable.setVisible(false);
     }
 
+    /**
+     * Sets the data on crate combined.
+     */
     private void setData_OnCrate_Combined() {
-        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.TACHO));
+        onCrate_mTachoTable.setItems(dataHandler.getOnCrateDataForCombined(TACHO));
         onCrate_Grid.setRowSpan(onCrate_mTachoTable, 2);
 
-        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.BID));
+        onCrate_mBrpTable.setItems(dataHandler.getOnCrateDataForCombined(BID));
         onCrate_Grid.setRowSpan(onCrate_mBrpTable, 2);
 
-        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.POL));
+        onCrate_mPolTable.setItems(dataHandler.getOnCrateDataForCombined(POL));
         onCrate_Grid.setRowSpan(onCrate_mPolTable, 2);
 
-        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(CardClass.DQC));
+        onCrate_mDqcTable.setItems(dataHandler.getOnCrateDataForCombined(DQC));
         onCrate_Grid.setRowSpan(onCrate_mDqcTable, 2);
 
         onCrate_fTachoTable.setVisible(false);
@@ -565,17 +628,20 @@ public class MainFormController {
         onCrate_fDqcTable.setVisible(false);
     }
 
+    /**
+     * Sets the data all stock combined.
+     */
     private void setData_AllStock_Combined() {
-        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.TACHO));
+        allStock_mTachoTable.setItems(dataHandler.getAllStockDataForCombined(TACHO));
         allStock_Grid.setRowSpan(allStock_mTachoTable, 2);
 
-        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.BID));
+        allStock_mBrpTable.setItems(dataHandler.getAllStockDataForCombined(BID));
         allStock_Grid.setRowSpan(allStock_mBrpTable, 2);
 
-        allStock_mPolTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.POL));
+        allStock_mPolTable.setItems(dataHandler.getAllStockDataForCombined(POL));
         allStock_Grid.setRowSpan(allStock_mPolTable, 2);
 
-        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForCombined(CardClass.DQC));
+        allStock_mDqcTable.setItems(dataHandler.getAllStockDataForCombined(DQC));
         allStock_Grid.setRowSpan(allStock_mDqcTable, 2);
 
         allStock_fTachoTable.setVisible(false);
@@ -584,6 +650,11 @@ public class MainFormController {
         allStock_fDqcTable.setVisible(false);
     }
     
+    /**
+     * Assigns an action to the refresh button.
+     * This action calls the getJsonData method in the background, shows a progress indicator on the button
+     * and updates the message label to display the time of last refresh. 
+     */
     private void assignRefreshBtnAction() {
         AtomicInteger taskExecution = new AtomicInteger(0);
 
@@ -639,6 +710,10 @@ public class MainFormController {
         });
     }
 
+    /**
+     * Assings the "totalRow" CSS styling to the bottom row of each table.
+     * The CSS styling sets the font to Bold for these rows.
+     */
     public void highlightTotals() {
         final PseudoClass totalRowPseudoClass = PseudoClass.getPseudoClass("totalrow");
         // In Vault Tab
@@ -670,8 +745,11 @@ public class MainFormController {
         allStock_fPolTable.setRowFactory(tableView -> new HighlightTotalRow(totalRowPseudoClass));
     }
 
-    @FXML
-    private void print() {
+    
+    /**
+     * Prints a screenshot of the currently selected tab.
+     */
+    @FXML private void print() {
         lblPrint.setText("Please wait...");
 
         WritableImage image;
@@ -724,6 +802,10 @@ public class MainFormController {
 
     }
 
+    /**
+     * Displays messages for the Print and Excel buttons.
+     * Messages are displayed for 3 seconds and then disappear.
+     */
     private void displayMessage() {
         lblPrint.setOpacity(1);
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(3), lblPrint);
@@ -735,15 +817,22 @@ public class MainFormController {
         lblTime.requestFocus();
     }
 
-    @FXML
-    private void save() {
+    
+    /**
+     * Saves the data as an Excel spreadsheet.
+     * A datamap is created, consisting of TableNames as keys and the table data as values. The table data is the union of both the 
+     * Morriston and Fforestfach data. The spreadsheet contains a single row of data, for each tab, with both sites shown separately
+     * in each table. 
+     */
+    @FXML private void save() {
         lblPrint.setText("Please wait...");
         
         new Thread(() -> {
 
             // BUILD DATA MAP
             Map<TableName, List<CardData>> dataMap = new HashMap<>();
-
+            
+            // Ignores the total row plus all rows in the table that are empty
             Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
 
             // ON SHELF
@@ -793,27 +882,21 @@ public class MainFormController {
                 });
             } catch (RuntimeException ex) {
                 LOGGER.error("Unable to save spreadsheet. {}", ex.getMessage());
-                Platform.runLater(() -> {
-                    lblPrint.setText("No data to save.");
-                });
+                Platform.runLater(() -> lblPrint.setText("No data to save."));
             }
-            // Update label
-            Platform.runLater(() -> {
-                displayMessage();
-            });
+            // Update label - runLater is called as we are on a background thread and need to switch to the GUI thread
+            Platform.runLater(() -> displayMessage());
 
         }).start();;        
     }
 
     /**
-     * user is logged out and application shut down.
+     * User is logged out and application shut down.
      */
     public void logout() {
         // contact RPD on background thread to prevent main window from freezing
         new Thread(() -> {
-            Platform.runLater(() -> {
-                LogOut.logout(NetworkConfig.getInstance());
-            });
+            Platform.runLater(() -> LogOut.logout(NetworkConfig.getInstance()));
         }).start();
     }
 }
