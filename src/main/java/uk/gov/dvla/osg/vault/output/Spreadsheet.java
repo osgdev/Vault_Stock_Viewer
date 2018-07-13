@@ -45,8 +45,9 @@ public class Spreadsheet {
      * Saves the workbook to the desktop.
      * 
      * @throws IOException
+     * @throws InterruptedException 
      */
-    public boolean save() throws IOException, RuntimeException {
+    public boolean save() throws IOException, RuntimeException, InterruptedException {
         // Blank workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
         createWorkbookStyles(workbook);
@@ -377,8 +378,9 @@ public class Spreadsheet {
      * @return true, if successful, false if user cancelled the save operation.
      * @throws FileNotFoundException if Workbook is currently open.
      * @throws IOException if unable to save Workbook to file system.
+     * @throws InterruptedException 
      */
-    private boolean saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException {
+    private boolean saveWorkbook(XSSFWorkbook workbook) throws FileNotFoundException, IOException, InterruptedException {
         // We need to wait for the "Save As" dialog to close before exiting the method
         final CountDownLatch latch = new CountDownLatch(1);
         // Used to update the message label according to whether the data was saved or user cancelled
@@ -412,11 +414,8 @@ public class Spreadsheet {
         });
         
         // Wait for dialog to close before exiting method.
-        try {
-            latch.await();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+        latch.await();
+       
         return saved.get();
     }
 }
