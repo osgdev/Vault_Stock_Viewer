@@ -836,7 +836,8 @@ public class MainFormController {
             Predicate<? super CardData> fieldsToIgnore = c -> c.cardType.equals("TOTAL") || c.cardType.isEmpty();
 
             // ON SHELF
-            dataMap.put(TableName.ONSHELF_TACHO, ListUtils.union(ListUtils.selectRejected(onShelf_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fTachoTable.getItems(), fieldsToIgnore)));
+            dataMap.put(TableName.ONSHELF_TACHO, 
+                    ListUtils.union(ListUtils.selectRejected(onShelf_mTachoTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fTachoTable.getItems(), fieldsToIgnore)));
             dataMap.put(TableName.ONSHELF_BRP, ListUtils.union(ListUtils.selectRejected(onShelf_mBrpTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fBrpTable.getItems(), fieldsToIgnore)));
             dataMap.put(TableName.ONSHELF_POL, ListUtils.union(ListUtils.selectRejected(onShelf_mPolTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fPolTable.getItems(), fieldsToIgnore)));
             dataMap.put(TableName.ONSHELF_DQC, ListUtils.union(ListUtils.selectRejected(onShelf_mDqcTable.getItems(), fieldsToIgnore), ListUtils.selectRejected(onShelf_fDqcTable.getItems(), fieldsToIgnore)));
