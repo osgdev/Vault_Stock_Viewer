@@ -1,6 +1,8 @@
 package uk.gov.dvla.osg.vault.main;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,12 +19,25 @@ public class Main extends Application {
     static final Logger LOGGER = LogManager.getLogger();
     
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/FXML/Login.fxml"));
+    public void start(Stage primaryStage) {
+        Parent loginScreen = null;
+        try {
+            loginScreen = FXMLLoader.load(getClass().getResource("/FXML/Login.fxml"));
+        } catch (IOException ex) {
+            LOGGER.error("Unable to load Login.fxml. Please check build path & re-build application.");
+        }
+        
+        InputStream loginScreenLogo = getClass().getResourceAsStream("/Images/vault.png");
+        
+        if (loginScreenLogo == null) {
+            LOGGER.error("Unable to load Login screen logo. Please check resource location & re-build application.");
+            System.exit(999);
+        }
+        
         primaryStage.setTitle("Vault Stock");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Images/vault.png")));
+        primaryStage.getIcons().add(new Image(loginScreenLogo));
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(root, 300, 200));
+        primaryStage.setScene(new Scene(loginScreen, 300, 200));
         primaryStage.show();
     }
     
