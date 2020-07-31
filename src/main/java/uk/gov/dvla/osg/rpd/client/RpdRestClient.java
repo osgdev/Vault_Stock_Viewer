@@ -44,7 +44,7 @@ public class RpdRestClient {
         return ClientBuilder.newClient()
                             .target(url)
                             .request(MediaType.APPLICATION_JSON)
-                            .header("ippdcredential", "<credential token='" + token + "'/>")
+                            .header("token", token)
                             .get();
     }
     

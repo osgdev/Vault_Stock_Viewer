@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import uk.gov.dvla.osg.rpd.error.RpdErrorResponse;
 import uk.gov.dvla.osg.rpd.json.JsonUtils;
-import uk.gov.dvla.osg.rpd.xml.xmlUtils;
 import uk.gov.dvla.osg.vault.data.VaultStock;
 import uk.gov.dvla.osg.vault.main.NetworkConfig;
 
@@ -25,17 +24,13 @@ public class VaultStockClient {
 
     private RpdErrorResponse errorMessage = new RpdErrorResponse();
     private final String url;
-
+    
     /**
      * Creates a new instance of VaultStockClient
      * @param config NetworkConfig object holding the vault url information.
      * @return a new instance of VaultStockClient
      */
-    public static VaultStockClient getInstance(NetworkConfig config) {
-        return new VaultStockClient(config);
-    }
-    
-    private VaultStockClient(NetworkConfig config) {
+    public VaultStockClient(NetworkConfig config) {
         this.url = config.getvaultUrl();
     }
 
@@ -55,8 +50,8 @@ public class VaultStockClient {
             } else {
                 MediaType mediaType = response.getMediaType();
                 // If RPD has been contacted an RPD error response is recieved in XML format
-                if (mediaType.equals(MediaType.APPLICATION_XML_TYPE)) {
-                    errorMessage = new xmlUtils().getXmlError(data);
+                if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+                    errorMessage = JsonUtils.getError(data);
                 } else {
                     // Unable to contact RPD, handle in the outer catch block.
                     throw new IllegalArgumentException();

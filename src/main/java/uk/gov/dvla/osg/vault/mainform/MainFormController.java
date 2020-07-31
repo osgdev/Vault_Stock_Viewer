@@ -301,12 +301,10 @@ public class MainFormController {
     private VaultStock loadJsonData() {
         try {
             if (DEBUG_MODE) {
-                // String file = "C:\\Users\\OSG\\Desktop\\Raw Json.txt";
-                // String file = "C:\\Users\\OSG\\Desktop\\NoTest.json";
                 String file = "C:\\Users\\OSG\\Desktop\\live-vault-json.json";
                 return JsonUtils.loadStockFile(file);
             } else {
-                VaultStockClient vsc = VaultStockClient.getInstance(NetworkConfig.getInstance());
+                VaultStockClient vsc = new VaultStockClient(NetworkConfig.getInstance());
                 Optional<VaultStock> vs = vsc.getStock(Session.getInstance().getToken());
                 if (vs.isPresent()) {
                     return vs.get();

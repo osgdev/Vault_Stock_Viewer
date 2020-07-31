@@ -16,6 +16,8 @@ import uk.gov.dvla.osg.vault.data.VaultStock;
 public class JsonUtils {
     private static final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
 
+    private JsonUtils() {}
+    
     /**
      * Extracts the user token from message body of a successful RPD login request
      * 
@@ -23,7 +25,7 @@ public class JsonUtils {
      * @return session token, or blank string if token not available
      */
     public static String getTokenFromJson(String jsonString) throws IllegalStateException, JsonSyntaxException {
-        return new JsonParser().parse(jsonString).getAsJsonObject().get("token").getAsString();
+        return JsonParser.parseString(jsonString).getAsJsonObject().get("token").getAsString();
     }
 
     /**
